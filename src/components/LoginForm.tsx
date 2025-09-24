@@ -1,7 +1,9 @@
+// src/components/LoginForm.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../services/api";
-import type { ApiError } from "../types/auth"; // Add 'type' keyword here
+import { useAuth } from "../hooks/useAuth";
+import type { ApiError } from "../types/auth";
 
 interface LoginFormProps {
   switchToRegister: () => void;
@@ -9,6 +11,7 @@ interface LoginFormProps {
 
 export default function LoginForm({ switchToRegister }: LoginFormProps) {
   const navigate = useNavigate();
+  const { setUser } = useAuth(); // Use AuthContext
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -41,14 +44,19 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
     setIsLoading(true);
 
     try {
-      // Use the authService to make the API call
+      // Call login API
       const response = await authService.login(email, password);
 
-      // If login is successful, navigate to products
+      // Save user to AuthContext (this will trigger re-renders)
+      if (response.user) {
+        setUser(response.user); // This updates the context state
+      }
+
       console.log("Login successful:", response);
+
+      // Navigate to products page
       navigate("/products");
     } catch (error) {
-      // Handle API errors
       const apiError = error as ApiError;
       setApiError(apiError.message || "Login failed. Please try again.");
       console.error("Login error:", error);
@@ -56,7 +64,6 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="w-1/2 flex flex-col justify-center items-center p-8">
       <form

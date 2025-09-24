@@ -11,9 +11,10 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
+    username: "",
+    avatar: "",
     password: "",
-    confirmPassword: "",
-    name: "",
+    password_confirmation: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState("");
@@ -40,7 +41,7 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
     // Validation
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) {
+    if (!formData.username.trim()) {
       newErrors.name = "Name is required";
     }
 
@@ -52,8 +53,8 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
       newErrors.password = "Password must be at least 3 characters";
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+    if (formData.password !== formData.password_confirmation) {
+      newErrors.password_confirmation = "Passwords do not match";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -66,8 +67,10 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
     try {
       const response = await authService.register({
         email: formData.email,
+        username: formData.username,
+        avatar: formData.avatar,
         password: formData.password,
-        name: formData.name,
+        password_confirmation: formData.password_confirmation,
       });
 
       console.log("Registration successful:", response);
@@ -102,25 +105,25 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
           <div className="relative">
             <input
               type="text"
-              name="name"
+              name="username" // ← match formData property
               placeholder="Full Name"
               className={`w-full h-12 px-4 rounded-lg border ${
-                errors.name
+                errors.username
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-orange-300"
               } focus:outline-none focus:ring-2 transition-colors`}
               required
-              value={formData.name}
+              value={formData.username} // ← already correct
               onChange={handleChange}
               disabled={isLoading}
             />
-            {!formData.name && (
+            {!formData.username && (
               <span className="absolute left-[95px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
                 *
               </span>
             )}
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+            {errors.username && (
+              <p className="text-red-500 text-sm mt-1">{errors.username}</p>
             )}
           </div>
 
@@ -180,26 +183,26 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
           <div className="relative">
             <input
               type="password"
-              name="confirmPassword"
+              name="password_confirmation"
               placeholder="Confirm Password"
               className={`w-full h-12 px-4 rounded-lg border ${
-                errors.confirmPassword
+                errors.password_confirmation
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-orange-300"
               } focus:outline-none focus:ring-2 transition-colors`}
               required
-              value={formData.confirmPassword}
+              value={formData.password_confirmation}
               onChange={handleChange}
               disabled={isLoading}
             />
-            {!formData.confirmPassword && (
+            {!formData.password_confirmation && (
               <span className="absolute left-[160px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
                 *
               </span>
             )}
-            {errors.confirmPassword && (
+            {errors.password_confirmation && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.confirmPassword}
+                {errors.password_confirmation}
               </p>
             )}
           </div>

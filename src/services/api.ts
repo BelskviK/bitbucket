@@ -1,4 +1,6 @@
+// src\services\api.ts
 import axios from "axios";
+import { setUser } from "./userService";
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -44,19 +46,24 @@ export const authService = {
       password,
     });
 
-    // Store token if available in response
+    // Store token and user if available in response
     if (response.data.token) {
       localStorage.setItem("authToken", response.data.token);
     }
 
+    if (response.data.user) {
+      setUser(response.data.user); // This saves to localStorage
+    }
+
     return response.data;
   },
-
   // Register method (if you have a register endpoint)
   register: async (userData: {
     email: string;
+    username: string;
+    avatar: string;
     password: string;
-    name?: string;
+    password_confirmation: string;
     // Add other registration fields as needed
   }) => {
     const response = await api.post("/register", userData);
