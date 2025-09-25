@@ -1,3 +1,4 @@
+// src\components\RegisterForm.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "../services/AuthService";
@@ -155,7 +156,7 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
             />
 
             {!formData.username && (
-              <span className="absolute left-[89px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
+              <span className="absolute left-[102px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
                 *
               </span>
             )}
@@ -181,7 +182,7 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
               disabled={isLoading}
             />
             {!formData.email && (
-              <span className="absolute left-[56px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
+              <span className="absolute left-[62px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
                 *
               </span>
             )}
@@ -207,7 +208,7 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
               disabled={isLoading}
             />
             {!formData.password && (
-              <span className="absolute left-[85px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
+              <span className="absolute left-[97px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
                 *
               </span>
             )}
@@ -278,7 +279,7 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
               disabled={isLoading}
             />
             {!formData.password_confirmation && (
-              <span className="absolute left-[147px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
+              <span className="absolute left-[164px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
                 *
               </span>
             )}

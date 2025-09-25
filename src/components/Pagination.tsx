@@ -1,129 +1,138 @@
-// src/components/Pagination.tsx
 import BackButton from "../assets/BackButton.svg";
 import ForwardButton from "../assets/ForwardButton.svg";
-
-interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  showingFrom: number;
-  showingTo: number;
-  totalItems: number;
-}
+import type { PaginationProps } from "../types";
+import { usePagination } from "../hooks/usePagination";
 
 export default function Pagination({
   currentPage,
   totalPages,
   onPageChange,
+  showingFrom,
+  showingTo,
+  totalItems,
 }: PaginationProps) {
-  // Generate page numbers with ellipsis logic
-  const getPageNumbers = () => {
-    const pages: (number | string)[] = [];
-
-    if (totalPages <= 5) {
-      // Show all pages if total pages is less than or equal to 5
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Always show first page
-      pages.push(1);
-
-      if (currentPage <= 3) {
-        // Near the beginning: show 2, 3, 4, ..., last
-        pages.push(2, 3, 4, "...", totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        // Near the end: show first, ..., last-3, last-2, last-1, last
-        pages.push(
-          "...",
-          totalPages - 3,
-          totalPages - 2,
-          totalPages - 1,
-          totalPages
-        );
-      } else {
-        // In the middle: show first, ..., current-1, current, current+1, ..., last
-        pages.push(
-          "...",
-          currentPage - 1,
-          currentPage,
-          currentPage + 1,
-          "...",
-          totalPages
-        );
-      }
+  const { pages, hasPrevious, hasNext } = usePagination(
+    currentPage,
+    totalPages,
+    {
+      maxVisiblePages: 5,
+      showEllipsis: true,
     }
+  );
 
-    return pages;
-  };
+  const handlePrevious = () => hasPrevious && onPageChange(currentPage - 1);
+  const handleNext = () => hasNext && onPageChange(currentPage + 1);
+  const handlePageClick = (page: number | string) =>
+    typeof page === "number" && onPageChange(page);
 
-  const pages = getPageNumbers();
-
-  const handlePrevious = () => {
-    if (currentPage > 1) {
-      onPageChange(currentPage - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) {
-      onPageChange(currentPage + 1);
-    }
-  };
-
-  if (totalPages <= 1) {
-    return null;
-  }
+  if (totalPages <= 1) return null;
 
   return (
-    <div className="w-full flex justify-center items-center space-x-2">
-      {/* Previous */}
-      <button
-        onClick={handlePrevious}
-        disabled={currentPage === 1}
-        className="w-8 h-8 flex items-center justify-center bg-white text-gray-700 rounded-md"
-      >
-        <img src={BackButton} alt="Previous" />
-      </button>
+    <div className="w-full flex flex-col items-center space-y-4">
+      {/* Results summary */}
+      <div className="text-sm text-gray-600 font-poppins">
+        Showing {showingFrom} to {showingTo} of {totalItems} results
+      </div>
 
-      {/* Page Numbers */}
-      {pages.map((page, index) => {
-        const isActive = page === currentPage;
+      {/* Pagination controls */}
+      <div className="flex justify-center items-center space-x-2">
+        <PaginationButton
+          onClick={handlePrevious}
+          disabled={!hasPrevious}
+          aria-label="Previous page"
+        >
+          <img src={BackButton} alt="Previous" className="w-4 h-4" />
+        </PaginationButton>
 
-        if (page === "...") {
-          return (
-            <span
-              key={index}
-              className="flex font-poppins items-center justify-center rounded-[4px] bg-white border-[1px] w-[32px] h-[32px] border-gray-100 text-gray-500 font-medium"
-            >
-              …
-            </span>
-          );
-        }
+        {pages.map((page, index) => (
+          <PageNumber
+            key={
+              typeof page === "number" ? `page-${page}` : `ellipsis-${index}`
+            }
+            page={page}
+            currentPage={currentPage}
+            onClick={handlePageClick}
+          />
+        ))}
 
-        return (
-          <button
-            key={index}
-            onClick={() => onPageChange(page as number)}
-            className={`flex font-poppins items-center justify-center rounded-[4px] bg-white border-[1px] w-[32px] h-[32px] ${
-              isActive
-                ? "border-customOrange text-customOrange font-medium"
-                : "border-gray-100 text-gray-500 font-medium"
-            }`}
-          >
-            {page}
-          </button>
-        );
-      })}
-
-      {/* Next */}
-      <button
-        onClick={handleNext}
-        disabled={currentPage === totalPages}
-        className="w-8 h-8 flex items-center justify-center bg-white text-gray-700 rounded-md"
-      >
-        <img src={ForwardButton} alt="Next" />
-      </button>
+        <PaginationButton
+          onClick={handleNext}
+          disabled={!hasNext}
+          aria-label="Next page"
+        >
+          <img src={ForwardButton} alt="Next" className="w-4 h-4" />
+        </PaginationButton>
+      </div>
     </div>
   );
 }
+
+// Sub-components for better organization
+interface PaginationButtonProps {
+  children: React.ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  "aria-label": string;
+}
+
+const PaginationButton = ({
+  children,
+  onClick,
+  disabled,
+  ...props
+}: PaginationButtonProps) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors ${
+      disabled
+        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+        : "bg-white text-gray-700 hover:bg-gray-100"
+    }`}
+    {...props}
+  >
+    {children}
+  </button>
+);
+
+interface PageNumberProps {
+  page: number | string;
+  currentPage: number;
+  onClick: (page: number | string) => void;
+}
+
+const PageNumber = ({ page, currentPage, onClick }: PageNumberProps) => {
+  const isActive = page === currentPage;
+  const isEllipsis = page === "...";
+  const isNumber = typeof page === "number";
+
+  if (isEllipsis) {
+    return (
+      <span
+        className="flex font-poppins items-center justify-center rounded-[4px] bg-white border-[1px] w-[32px] h-[32px] border-gray-100 text-gray-500 font-medium"
+        aria-hidden="true"
+      >
+        …
+      </span>
+    );
+  }
+
+  if (isNumber) {
+    return (
+      <button
+        onClick={() => onClick(page)}
+        className={`flex font-poppins items-center justify-center rounded-[4px] border-[1px] w-[32px] h-[32px] transition-colors ${
+          isActive
+            ? "border-orange-500 text-orange-500 bg-orange-50 font-medium"
+            : "border-gray-100 text-gray-500 hover:bg-gray-50 font-medium"
+        }`}
+        aria-label={`Go to page ${page}`}
+        aria-current={isActive ? "page" : undefined}
+      >
+        {page}
+      </button>
+    );
+  }
+
+  return null;
+};

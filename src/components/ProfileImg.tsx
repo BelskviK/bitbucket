@@ -1,10 +1,5 @@
-// src/components/ProfileImg.tsx
 import defaultProfile from "../assets/DefaultProfileImg.svg";
-
-interface ProfileImgProps {
-  avatar?: string;
-  className?: string;
-}
+import type { ProfileImgProps } from "../types";
 
 export default function ProfileImg({ avatar, className }: ProfileImgProps) {
   return (

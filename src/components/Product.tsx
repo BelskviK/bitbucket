@@ -1,14 +1,5 @@
-// src/components/Product.tsx
 import { Link } from "react-router-dom";
-// src/components/Product.tsx
-interface ProductProps {
-  product?: {
-    id: number;
-    name: string;
-    price: number;
-    cover_image?: string;
-  };
-}
+import type { ProductProps } from "../types";
 
 export default function Product({ product }: ProductProps) {
   if (!product) {

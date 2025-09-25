@@ -1,39 +1,12 @@
-// src/components/ProductsFilter.tsx
 import { useState, useRef, useEffect } from "react";
 import IconFilter from "../assets/FilterIcon.svg";
-
-interface FilterModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onApplyFilters: (filters: FilterParams) => void;
-  currentFilters: FilterParams;
-}
-
-interface SortModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onApplySort: (sort: string) => void;
-}
-
-interface FilterLabelProps {
-  priceFrom: number;
-  priceTo: number;
-  onRemove: () => void;
-}
-
-export interface FilterParams {
-  price_from?: number;
-  price_to?: number;
-}
-interface ProductsFilterProps {
-  productsCount: number; // Total number of products
-  showingFrom?: number; // Current page starting index
-  showingTo?: number; // Current page ending index
-  onFiltersChange: (filters: FilterParams) => void;
-  onSortChange: (sort: string) => void;
-  currentFilters: FilterParams;
-}
-
+import type {
+  FilterParams,
+  ProductsFilterProps,
+  FilterModalProps,
+  SortModalProps,
+  FilterLabelProps,
+} from "../types";
 // Filter Label Component
 const FilterLabel = ({ priceFrom, priceTo, onRemove }: FilterLabelProps) => {
   return (
@@ -87,11 +60,10 @@ const FilterModal = ({
 
   useClickOutside(modalRef, onClose);
 
-  // Update local state when currentFilters change
   useEffect(() => {
     setPriceFrom(currentFilters.price_from?.toString() || "");
     setPriceTo(currentFilters.price_to?.toString() || "");
-  }, [currentFilters, isOpen]); // Added isOpen to dependency array
+  }, [currentFilters, isOpen]);
 
   const handleApply = () => {
     const filters: FilterParams = {};
@@ -225,7 +197,6 @@ export default function ProductsFilter({
   };
 
   const handleRemoveFilters = () => {
-    // Clear both price filters
     onFiltersChange({
       price_from: undefined,
       price_to: undefined,
@@ -237,7 +208,6 @@ export default function ProductsFilter({
     setSortModalOpen(false);
   };
 
-  // Check if we have active price filters to show the label
   const hasPriceFilters =
     currentFilters.price_from !== undefined &&
     currentFilters.price_to !== undefined;
@@ -245,7 +215,7 @@ export default function ProductsFilter({
   return (
     <div className="z-50 w-[1920px] px-[100px] mx-auto">
       {/* First Row: Title and Filter Controls */}
-      <div className="flex justify-between items-center   relative">
+      <div className="flex justify-between items-center relative">
         <h1 className="font-poppins font-semibold text-[42px] leading-[1] tracking-normal text-gray-900">
           Products
         </h1>
@@ -313,7 +283,7 @@ export default function ProductsFilter({
         </div>
       </div>
 
-      {/* Second Row: Filter Label (only shown when filters are active) */}
+      {/* Second Row: Filter Label */}
       {hasPriceFilters && (
         <div className=" ">
           <FilterLabel

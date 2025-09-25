@@ -1,40 +1,20 @@
-// src/pages/Products.tsx
 import { useEffect, useState } from "react";
-import type { FilterParams } from "../components/ProductsFilter";
 import ProductsFilter from "../components/ProductsFilter";
 import ProductCard from "../components/Product";
 import Pagination from "../components/Pagination";
 import { ProductService } from "../services/ProductService";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  cover_image?: string;
-}
-
-interface QueryParams extends FilterParams {
-  sort?: string;
-  page?: number;
-}
-
-interface PaginationData {
-  current_page: number;
-  last_page: number;
-  from: number;
-  to: number;
-  total: number;
-}
-
-interface ApiResponse {
-  data: Product[];
-  meta: PaginationData;
-}
+import type {
+  Product,
+  ProductQueryParams,
+  PaginationData,
+  ApiResponse,
+  FilterParams,
+} from "../types";
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [queryParams, setQueryParams] = useState<QueryParams>({});
+  const [queryParams, setQueryParams] = useState<ProductQueryParams>({});
   const [pagination, setPagination] = useState<PaginationData>({
     current_page: 1,
     last_page: 1,
@@ -47,8 +27,7 @@ export default function Products() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-
-        const response: ApiResponse = await ProductService.getProducts(
+        const response: ApiResponse<Product> = await ProductService.getProducts(
           queryParams
         );
 
@@ -112,9 +91,6 @@ export default function Products() {
 
       {/* Scrollable Content */}
       <div className="pt-20">
-        {" "}
-        {/* Add padding to account for fixed header */}
-        {/* Products Grid - 4 columns */}
         <div className="grid grid-cols-4 gap-8 justify-center mb-8">
           {loading
             ? Array.from({ length: 8 }).map((_, i) => <ProductCard key={i} />)
@@ -122,7 +98,7 @@ export default function Products() {
                 <ProductCard key={product.id} product={product} />
               ))}
         </div>
-        {/* Pagination */}
+
         <Pagination
           currentPage={pagination.current_page}
           totalPages={pagination.last_page}

@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import ProfileImg from "./ProfileImg";
 import UploadPhoto from "../assets/UploadPhoto.svg";
+import { useAvatarInput } from "../hooks/useAvatarInput";
 
 interface AvatarInputProps {
   onAvatarChange: (avatar: File | null) => void;
@@ -11,28 +12,26 @@ export default function AvatarInput({
   onAvatarChange,
   currentAvatar = "",
 }: AvatarInputProps) {
-  const [avatarPreview, setAvatarPreview] = useState(currentAvatar);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { state, handleFileSelect, handleRemove } =
+    useAvatarInput(currentAvatar);
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        alert("Please select an image file");
-        return;
+      try {
+        await handleFileSelect(file);
+        onAvatarChange(file); // Send File object to parent
+      } catch (error) {
+        // Error is already handled in the hook state
+        onAvatarChange(null);
+        // You can show the error from state.error in your UI instead of alert
+        if (error instanceof Error) {
+          alert(error.message); // Keep alert for now, but consider better error handling
+        }
       }
-
-      // Validate file size (e.g., 5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        alert("File size should be less than 5MB");
-        return;
-      }
-
-      // Create preview URL
-      const previewUrl = URL.createObjectURL(file);
-      setAvatarPreview(previewUrl);
-      onAvatarChange(file); // Send File object directly
     }
   };
 
@@ -40,8 +39,8 @@ export default function AvatarInput({
     fileInputRef.current?.click();
   };
 
-  const handleRemove = () => {
-    setAvatarPreview("");
+  const handleRemoveClick = () => {
+    handleRemove();
     onAvatarChange(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -52,9 +51,9 @@ export default function AvatarInput({
     <div className="w-[578px] h-[140px] flex flex-row items-center gap-[15px]">
       {/* Profile image preview */}
       <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
-        {avatarPreview ? (
+        {state.avatarPreview ? (
           <img
-            src={avatarPreview}
+            src={state.avatarPreview}
             alt="Avatar preview"
             className="w-full h-full object-cover"
           />
@@ -62,23 +61,28 @@ export default function AvatarInput({
           <ProfileImg avatar={currentAvatar} />
         )}
       </div>
-      <div
-        onClick={handleUploadClick}
-        className="font-poppins font-normal text-[14px] leading-[100%] text-center cursor-pointer hover:text-orange-500 transition-colors"
-      >
-        Upload new
-      </div>
 
-      <button
-        type="button"
-        onClick={handleRemove}
-        className="font-poppins font-normal text-[14px] leading-[100%] text-center hover:text-red-700 transition-colors"
-      >
-        Remove
-      </button>
-      {/* Show "Upload new" and "Remove" buttons only when an image is uploaded */}
-      {!avatarPreview && (
-        /* Show upload button only when no image is uploaded */
+      {/* Show action buttons only when an image is uploaded */}
+
+      <>
+        <div
+          onClick={handleUploadClick}
+          className="font-poppins font-normal text-[14px] leading-[100%] text-center cursor-pointer hover:text-orange-500 transition-colors"
+        >
+          Upload new
+        </div>
+
+        <button
+          type="button"
+          onClick={handleRemoveClick}
+          className="font-poppins font-normal text-[14px] leading-[100%] text-center hover:text-red-700 transition-colors"
+        >
+          Remove
+        </button>
+      </>
+
+      {/* Show upload area only when no image is uploaded */}
+      {!state.avatarPreview && (
         <div
           className="flex flex-row items-center gap-2 cursor-pointer"
           onClick={handleUploadClick}
@@ -94,11 +98,24 @@ export default function AvatarInput({
         </div>
       )}
 
+      {/* Loading state */}
+      {state.isLoading && (
+        <div className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+          <span className="ml-2">Processing image...</span>
+        </div>
+      )}
+
+      {/* Error display */}
+      {state.error && (
+        <div className="text-red-500 text-sm mt-2">{state.error}</div>
+      )}
+
       {/* Hidden file input */}
       <input
         type="file"
         ref={fileInputRef}
-        onChange={handleFileSelect}
+        onChange={handleFileInputChange}
         accept="image/*"
         className="hidden"
       />
