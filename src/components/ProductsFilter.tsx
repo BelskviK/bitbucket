@@ -25,9 +25,10 @@ export interface FilterParams {
   price_from?: number;
   price_to?: number;
 }
-
 interface ProductsFilterProps {
-  productsCount: number;
+  productsCount: number; // Total number of products
+  showingFrom?: number; // Current page starting index
+  showingTo?: number; // Current page ending index
   onFiltersChange: (filters: FilterParams) => void;
   onSortChange: (sort: string) => void;
   currentFilters: FilterParams;
@@ -204,6 +205,8 @@ const SortModal = ({ isOpen, onClose, onApplySort }: SortModalProps) => {
 
 export default function ProductsFilter({
   productsCount,
+  showingFrom,
+  showingTo,
   onFiltersChange,
   onSortChange,
   currentFilters,
@@ -240,9 +243,9 @@ export default function ProductsFilter({
     currentFilters.price_to !== undefined;
 
   return (
-    <div className="mb-8">
+    <div className="  z-50">
       {/* First Row: Title and Filter Controls */}
-      <div className="flex justify-between items-center mb-4 relative">
+      <div className="flex justify-between items-center   relative">
         <h1 className="font-poppins font-semibold text-[42px] leading-[1] tracking-normal text-gray-900">
           Products
         </h1>
@@ -250,7 +253,8 @@ export default function ProductsFilter({
         {/* Filter and Sort Controls */}
         <div className="flex items-center gap-[32px] relative">
           <span className="text-gray-600 font-poppins font-normal text-[12px] leading-[100%] tracking-[0%]">
-            Showing 1-{productsCount} of {productsCount} results
+            Showing {showingFrom || 1}-{showingTo || productsCount} of{" "}
+            {productsCount} results
           </span>
 
           <div className="w-px h-4 bg-gray-300"></div>
@@ -311,7 +315,7 @@ export default function ProductsFilter({
 
       {/* Second Row: Filter Label (only shown when filters are active) */}
       {hasPriceFilters && (
-        <div className="mt-4">
+        <div className=" ">
           <FilterLabel
             priceFrom={currentFilters.price_from!}
             priceTo={currentFilters.price_to!}

@@ -23,7 +23,7 @@ export default function Product({ product }: ProductProps) {
     <Link to={`/products/${product.id}`} className="block">
       <div className="w-[412px] h-[614px] bg-white rounded-lg overflow-hidden group cursor-pointer">
         {/* Product Image Section */}
-        <div className="relative bg-gray-100 h-[549px] flex items-center justify-center">
+        <div className="relative bg-gray-100 h-[542px] flex items-center justify-center">
           {product.cover_image ? (
             <img
               src={product.cover_image}
@@ -39,10 +39,11 @@ export default function Product({ product }: ProductProps) {
 
         {/* Product Info Section */}
         <div className="mt-[12px] h-[53px]">
-          <h3 className="font-poppins font-medium text-[18px] leading-[100%] tracking-[0%] text-gray-900 mb-2 group-hover:text-orange-500 transition-colors">
+          <h3 className="font-poppins font-semibold text-[18px] leading-[100%] tracking-normal text-gray-900 mb-2 group-hover:text-orange-500 transition-colors">
             {product.name}
           </h3>
-          <p className="font-poppins font-medium text-[16px] leading-[100%] tracking-[0%] text-gray-900">
+
+          <p className="font-poppins font-semibold text-[16px] leading-[100%] tracking-normal text-gray-900">
             $ {product.price}
           </p>
         </div>

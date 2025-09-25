@@ -15,11 +15,11 @@ function App() {
     <AuthProvider>
       <Router>
         {/* Outer wrapper ensures full screen background */}
-        <div className="min-h-screen flex justify-center items-start bg-gray-100">
+        <div className="min-h-screen flex justify-center items-start">
           {/* Fixed-width app container */}
           <div className="w-[1920px] h-[1080px] flex flex-col text-gray-800 bg-white">
             <Banner />
-            <main className="flex-1">
+            <main className="flex-1 pt-[80px]">
               <Routes>
                 <Route path="/products" element={<Products />} />
                 <Route path="/products/:productId" element={<ProductPage />} />

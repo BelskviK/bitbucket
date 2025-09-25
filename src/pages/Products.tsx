@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { FilterParams } from "../components/ProductsFilter";
 import ProductsFilter from "../components/ProductsFilter";
 import ProductCard from "../components/Product";
+import Pagination from "../components/Pagination";
 import { ProductService } from "../services/ProductService";
 
 interface Product {
@@ -17,17 +18,39 @@ interface QueryParams extends FilterParams {
   page?: number;
 }
 
+interface PaginationData {
+  current_page: number;
+  last_page: number;
+  from: number;
+  to: number;
+  total: number;
+}
+
+interface ApiResponse {
+  data: Product[];
+  meta: PaginationData;
+}
+
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [queryParams, setQueryParams] = useState<QueryParams>({});
+  const [pagination, setPagination] = useState<PaginationData>({
+    current_page: 1,
+    last_page: 1,
+    from: 0,
+    to: 0,
+    total: 0,
+  });
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
 
-        const response = await ProductService.getProducts(queryParams);
+        const response: ApiResponse = await ProductService.getProducts(
+          queryParams
+        );
 
         const formattedProducts = response.data.map((p: Product) => ({
           id: p.id,
@@ -37,6 +60,7 @@ export default function Products() {
         }));
 
         setProducts(formattedProducts);
+        setPagination(response.meta);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       } finally {
@@ -63,23 +87,50 @@ export default function Products() {
     }));
   };
 
+  const handlePageChange = (page: number) => {
+    setQueryParams((prev) => ({
+      ...prev,
+      page,
+    }));
+  };
+
   return (
     <div className="px-[100px] py-20">
-      {/* Header Section with Filters */}
-      <ProductsFilter
-        productsCount={products.length}
-        onFiltersChange={handleFiltersChange}
-        onSortChange={handleSortChange}
-        currentFilters={queryParams} // Pass current filters to the component
-      />
+      {/* Fixed Header Section with Filters */}
+      <div className="fixed top-0 left-0 right-0 bg-white z-40  ">
+        <div className="px-[100px]  pt-[156px]">
+          <ProductsFilter
+            productsCount={pagination.total}
+            showingFrom={pagination.from}
+            showingTo={pagination.to}
+            onFiltersChange={handleFiltersChange}
+            onSortChange={handleSortChange}
+            currentFilters={queryParams}
+          />
+        </div>
+      </div>
 
-      {/* Products Grid - 4 columns */}
-      <div className="grid grid-cols-4 gap-8 justify-center">
-        {loading
-          ? Array.from({ length: 8 }).map((_, i) => <ProductCard key={i} />)
-          : products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+      {/* Scrollable Content */}
+      <div className="pt-20">
+        {" "}
+        {/* Add padding to account for fixed header */}
+        {/* Products Grid - 4 columns */}
+        <div className="grid grid-cols-4 gap-8 justify-center mb-8">
+          {loading
+            ? Array.from({ length: 8 }).map((_, i) => <ProductCard key={i} />)
+            : products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+        </div>
+        {/* Pagination */}
+        <Pagination
+          currentPage={pagination.current_page}
+          totalPages={pagination.last_page}
+          onPageChange={handlePageChange}
+          showingFrom={pagination.from}
+          showingTo={pagination.to}
+          totalItems={pagination.total}
+        />
       </div>
     </div>
   );
