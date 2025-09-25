@@ -4,9 +4,9 @@ import AuthProvider from "./context/AuthProvider";
 // layout
 import Banner from "./components/Banner";
 
-// page
+// page - CORRECTED: Import from pages, not components
 import Products from "./pages/Products";
-import Product from "./pages/Product";
+import ProductPage from "./pages/Product"; // Renamed to avoid conflict
 import Checkout from "./pages/Checkout";
 import Login from "./pages/Login";
 
@@ -22,7 +22,7 @@ function App() {
             <main className="flex-1">
               <Routes>
                 <Route path="/products" element={<Products />} />
-                <Route path="/products/:productId" element={<Product />} />
+                <Route path="/products/:productId" element={<ProductPage />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Login />} />

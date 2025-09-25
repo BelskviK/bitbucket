@@ -9,13 +9,13 @@ export default function Banner() {
   const { user } = useAuth();
 
   return (
-    <header className="w-[1920px] h-[80px] bg-white shadow z-50 flex justify-between items-center py-[10px] px-[100px]">
+    <header className="w-[1920px] h-[80px] bg-white   z-50 flex justify-between items-center py-[10px] px-[100px]">
       {/* Logo with Link */}
       <Link to="/products">
         <img
           src={Logo}
           alt="Logo"
-          className="w-[180px] h-[24px] cursor-pointer hover:opacity-80 transition-opacity"
+          className="w-[180px] h-[24px] my-[28px] cursor-pointer hover:opacity-80 transition-opacity"
         />
       </Link>
 
