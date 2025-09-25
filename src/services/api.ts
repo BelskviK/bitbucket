@@ -56,23 +56,38 @@ export const authService = {
     }
 
     return response.data;
-  },
-  // Register method (if you have a register endpoint)
+  }, // src/services/api.ts
+  // src/services/api.ts
   register: async (userData: {
     email: string;
     username: string;
-    avatar: string;
+    avatar: File | null; // Change to File | null
     password: string;
     password_confirmation: string;
-    // Add other registration fields as needed
   }) => {
-    const response = await api.post("/register", userData);
+    const formData = new FormData();
+    formData.append("email", userData.email);
+    formData.append("username", userData.username);
+    formData.append("password", userData.password);
+    formData.append("password_confirmation", userData.password_confirmation);
 
-    // Store token if available in response
+    // Only add avatar if it's provided
+    if (userData.avatar instanceof File) {
+      formData.append("avatar", userData.avatar);
+    }
+
+    const response = await api.post("/register", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
     if (response.data.token) {
       localStorage.setItem("authToken", response.data.token);
     }
-
+    if (response.data.user) {
+      setUser(response.data.user); // This saves to localStorage
+    }
     return response.data;
   },
 

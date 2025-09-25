@@ -3,17 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { authService } from "../services/api";
 import type { ApiError } from "../types/auth";
 import AvatarInput from "./AvatarInput";
+import { useAuth } from "../hooks/useAuth";
 
 interface RegisterFormProps {
   switchToLogin: () => void;
 }
 
 export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
+  const { setUser } = useAuth(); // Use AuthContext
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     username: "",
-    avatar: "",
+    avatar: null as File | null, // Change to File | null
     password: "",
     password_confirmation: "",
   });
@@ -35,6 +37,13 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
         [e.target.name]: "",
       });
     }
+  };
+
+  const handleAvatarChange = (avatar: File | null) => {
+    setFormData({
+      ...formData,
+      avatar: avatar,
+    });
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -75,7 +84,9 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
         password: formData.password,
         password_confirmation: formData.password_confirmation,
       });
-
+      if (response.user) {
+        setUser(response.user); // This updates the context state
+      }
       console.log("Registration successful:", response);
       navigate("/products");
     } catch (error) {
@@ -100,12 +111,20 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
         onSubmit={handleRegister}
         className="w-full max-w-[554px] flex flex-col gap-6"
       >
-        <h1 className="text-[46px] font-bold font-poppins   tracking-[0px] self-start">
+        <h1 className="text-[46px] font-bold font-poppins tracking-[0px] self-start">
           Registration
         </h1>
+
+        {/* Avatar Input Section */}
         <div className="">
-          <AvatarInput />
+          <AvatarInput
+            onAvatarChange={handleAvatarChange}
+            currentAvatar={
+              formData.avatar ? URL.createObjectURL(formData.avatar) : ""
+            }
+          />
         </div>
+
         {/* API Error Message */}
         {apiError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
