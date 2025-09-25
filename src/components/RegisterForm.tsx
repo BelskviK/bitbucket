@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "../services/AuthService";
-import type { ApiError } from "../types/auth";
+import type { ApiError, RegisterCredentials } from "../types"; // Updated import
 import AvatarInput from "./AvatarInput";
 import { useAuth } from "../hooks/useAuth";
 
 interface RegisterFormProps {
   switchToLogin: () => void;
 }
+interface RegisterFormData extends Omit<RegisterCredentials, "avatar"> {
+  avatar: File | null;
+  password_confirmation: string;
+}
 
 export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
-  const { setUser } = useAuth(); // Use AuthContext
+  const { setUser } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterFormData>({
     email: "",
     username: "",
     avatar: null as File | null, // Change to File | null

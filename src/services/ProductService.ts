@@ -1,5 +1,5 @@
 // src/services/ProductService.ts
-import api from "./api";
+import api from "./Api";
 
 // Define interfaces for the query parameters
 interface ProductQueryParams {

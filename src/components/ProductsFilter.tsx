@@ -243,7 +243,7 @@ export default function ProductsFilter({
     currentFilters.price_to !== undefined;
 
   return (
-    <div className="  z-50">
+    <div className="z-50 w-[1920px] px-[100px] mx-auto">
       {/* First Row: Title and Filter Controls */}
       <div className="flex justify-between items-center   relative">
         <h1 className="font-poppins font-semibold text-[42px] leading-[1] tracking-normal text-gray-900">

@@ -1,4 +1,12 @@
-// src\types\auth.ts
+// User related types
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+  avatar?: string;
+}
+
+// Authentication related types
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -7,22 +15,27 @@ export interface LoginCredentials {
 export interface RegisterCredentials {
   email: string;
   password: string;
-  name?: string;
-  // Add other registration fields as needed
+  password_confirmation: string;
+  username: string;
+  avatar?: File | null;
 }
 
+export interface AuthResponse {
+  token?: string;
+  user?: User;
+  message?: string;
+}
+
+// Error handling
 export interface ApiError {
   message: string;
   status?: number;
   errors?: Record<string, string[]>;
 }
-export interface AuthResponse {
-  token?: string;
-  user?: {
-    id: string;
-    email: string;
-    username: string;
-    avatar?: string; // Add this
-  };
-  message?: string;
+
+// Context types
+export interface AuthContextType {
+  user: User | null;
+  setUser: (user: User | null) => void;
+  logout: () => void;
 }

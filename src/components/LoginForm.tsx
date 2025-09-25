@@ -1,9 +1,8 @@
-// src/components/LoginForm.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "../services/AuthService";
 import { useAuth } from "../hooks/useAuth";
-import type { ApiError } from "../types/auth";
+import type { ApiError, LoginCredentials } from "../types";
 
 interface LoginFormProps {
   switchToRegister: () => void;
@@ -11,9 +10,14 @@ interface LoginFormProps {
 
 export default function LoginForm({ switchToRegister }: LoginFormProps) {
   const navigate = useNavigate();
-  const { setUser } = useAuth(); // Use AuthContext
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { setUser } = useAuth();
+
+  // Use LoginCredentials interface for better type safety
+  const [credentials, setCredentials] = useState<LoginCredentials>({
+    email: "",
+    password: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -26,14 +30,14 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
 
     let valid = true;
 
-    if (email.length < 3) {
+    if (credentials.email.length < 3) {
       setEmailError("Email must be at least 3 characters");
       valid = false;
     } else {
       setEmailError("");
     }
 
-    if (password.length < 3) {
+    if (credentials.password.length < 3) {
       setPasswordError("Password must be at least 3 characters");
       valid = false;
     } else {
@@ -45,17 +49,17 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
     setIsLoading(true);
 
     try {
-      // Call login API
-      const response = await AuthService.login(email, password);
+      // Use the credentials object directly
+      const response = await AuthService.login(
+        credentials.email,
+        credentials.password
+      );
 
-      // Save user to AuthContext (this will trigger re-renders)
       if (response.user) {
-        setUser(response.user); // This updates the context state
+        setUser(response.user);
       }
 
       console.log("Login successful:", response);
-
-      // Navigate to products page
       navigate("/products");
     } catch (error) {
       const apiError = error as ApiError;
@@ -64,6 +68,17 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Update individual fields
+  const handleEmailChange = (email: string) => {
+    setCredentials((prev) => ({ ...prev, email }));
+    if (emailError) setEmailError("");
+  };
+
+  const handlePasswordChange = (password: string) => {
+    setCredentials((prev) => ({ ...prev, password }));
+    if (passwordError) setPasswordError("");
   };
 
   const togglePasswordVisibility = () => {
@@ -77,7 +92,6 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
           Log in
         </h1>
 
-        {/* API Error Message */}
         {apiError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
             {apiError}
@@ -96,11 +110,11 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
                   : "border-gray-300 focus:ring-orange-300"
               } focus:outline-none focus:ring-2 transition-colors`}
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={credentials.email}
+              onChange={(e) => handleEmailChange(e.target.value)}
               disabled={isLoading}
             />
-            {!email && (
+            {!credentials.email && (
               <span className="absolute left-[56px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
                 *
               </span>
@@ -121,11 +135,11 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
                   : "border-gray-300 focus:ring-orange-300"
               } focus:outline-none focus:ring-2 transition-colors`}
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={credentials.password}
+              onChange={(e) => handlePasswordChange(e.target.value)}
               disabled={isLoading}
             />
-            {!password && (
+            {!credentials.password && (
               <span className="absolute left-[85px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
                 *
               </span>

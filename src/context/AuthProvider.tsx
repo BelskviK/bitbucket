@@ -1,25 +1,23 @@
-// src/context/AuthProvider.tsx
-import { useState, type ReactNode } from "react"; // Added 'type' for ReactNode
-import { AuthContext, type AuthContextType } from "./AuthContext";
-import type { AuthResponse } from "../types/auth";
-import { getUser, setUser as setStoredUser } from "../services/userService";
+import { useState, type ReactNode } from "react";
+import { AuthContext } from "./AuthContext";
+import type { AuthContextType, User } from "../types"; // Centralized imports
+import { getUser, setUser as setStoredUser } from "../services/UserService";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUserState] = useState<AuthResponse["user"] | null>(getUser());
+  const [user, setUserState] = useState<User | null>(getUser());
 
-  const setUser = (user: AuthResponse["user"]) => {
+  const setUser = (user: User | null) => {
     setStoredUser(user);
     setUserState(user);
   };
 
   const logout = () => {
-    setUserState(null);
+    setUser(null);
     localStorage.removeItem("authToken");
-    localStorage.removeItem("user");
   };
 
   const value: AuthContextType = {
