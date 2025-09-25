@@ -10,8 +10,14 @@ export default function Banner() {
 
   return (
     <header className="w-[1920px] h-[80px] bg-white shadow z-50 flex justify-between items-center py-[10px] px-[100px]">
-      {/* Logo */}
-      <img src={Logo} alt="Logo" className="w-[180px] h-[24px]" />
+      {/* Logo with Link */}
+      <Link to="/products">
+        <img
+          src={Logo}
+          alt="Logo"
+          className="w-[180px] h-[24px] cursor-pointer hover:opacity-80 transition-opacity"
+        />
+      </Link>
 
       {/* Right side */}
       <div>
