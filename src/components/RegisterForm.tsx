@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authService } from "../services/api";
+import { AuthService } from "../services/AuthService";
 import type { ApiError } from "../types/auth";
 import AvatarInput from "./AvatarInput";
 import { useAuth } from "../hooks/useAuth";
@@ -77,7 +77,7 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
     setIsLoading(true);
 
     try {
-      const response = await authService.register({
+      const response = await AuthService.register({
         email: formData.email,
         username: formData.username,
         avatar: formData.avatar,

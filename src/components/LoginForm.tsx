@@ -1,7 +1,7 @@
 // src/components/LoginForm.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authService } from "../services/api";
+import { AuthService } from "../services/AuthService";
 import { useAuth } from "../hooks/useAuth";
 import type { ApiError } from "../types/auth";
 
@@ -46,7 +46,7 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
 
     try {
       // Call login API
-      const response = await authService.login(email, password);
+      const response = await AuthService.login(email, password);
 
       // Save user to AuthContext (this will trigger re-renders)
       if (response.user) {

@@ -1,4 +1,3 @@
-// src/services/userService.ts
 import type { AuthResponse } from "../types/auth";
 
 let currentUser: AuthResponse["user"] | null = null;
