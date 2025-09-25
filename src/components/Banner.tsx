@@ -6,10 +6,10 @@ import ProfileImg from "./ProfileImg";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Banner() {
-  const { user } = useAuth(); // Use AuthContext instead of getUser()
+  const { user } = useAuth();
 
   return (
-    <header className="fixed w-full h-[80px] bg-white shadow z-50 flex justify-between items-center py-[10px] px-[100px]">
+    <header className="w-[1920px] h-[80px] bg-white shadow z-50 flex justify-between items-center py-[10px] px-[100px]">
       {/* Logo */}
       <img src={Logo} alt="Logo" className="w-[180px] h-[24px]" />
 
@@ -25,7 +25,9 @@ export default function Banner() {
             </button>
           </Link>
         ) : (
-          <ProfileImg avatar={user?.avatar} />
+          <div className="w-[40px] h-[40px]">
+            <ProfileImg avatar={user?.avatar} />
+          </div>
         )}
       </div>
     </header>

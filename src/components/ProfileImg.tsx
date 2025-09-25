@@ -1,16 +1,17 @@
-// src\components\ProfileImg.tsx
-import defaultProfile from "../assets/DefaultProfileImg.png"; // 40x40 placeholder
+// src/components/ProfileImg.tsx
+import defaultProfile from "../assets/DefaultProfileImg.svg";
 
 interface ProfileImgProps {
   avatar?: string;
+  className?: string;
 }
 
-export default function ProfileImg({ avatar }: ProfileImgProps) {
+export default function ProfileImg({ avatar, className }: ProfileImgProps) {
   return (
     <img
       src={avatar || defaultProfile}
       alt="Profile"
-      className="w-[40px] h-[40px] rounded-full object-cover"
+      className={`w-full h-full rounded-full object-cover ${className || ""}`}
     />
   );
 }
