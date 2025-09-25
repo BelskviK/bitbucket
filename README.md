@@ -28,18 +28,20 @@ Node.js (version 16 or higher)
 
 npm or yarn package manager
 
-Installation & Development
-Install dependencies
+## Installation & Development
+
+# Install dependencies
 
 ```
 npm install
 ```
 
-Start the development server
+# Start the development server
 
 ```
 npm run dev
 ```
 
-Open your browser
+# Open your browser
+
 Navigate to http://localhost:5173 to view the application.
