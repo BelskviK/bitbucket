@@ -1,4 +1,4 @@
-import api from "./Api";
+import api from "./api";
 
 export const ProductService = {
   // List products with optional filters, pagination, sorting

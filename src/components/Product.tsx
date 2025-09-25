@@ -1,17 +1,16 @@
 // src/components/Product.tsx
 import { Link } from "react-router-dom";
-
+// src/components/Product.tsx
 interface ProductProps {
   product?: {
     id: number;
     name: string;
     price: number;
-    image?: string;
+    cover_image?: string;
   };
 }
 
 export default function Product({ product }: ProductProps) {
-  // Safety check - if product is undefined, show a placeholder
   if (!product) {
     return (
       <div className="w-[412px] h-[614px] bg-gray-100 rounded-lg flex items-center justify-center">
@@ -25,9 +24,17 @@ export default function Product({ product }: ProductProps) {
       <div className="w-[412px] h-[614px] bg-white rounded-lg overflow-hidden group cursor-pointer">
         {/* Product Image Section */}
         <div className="relative bg-gray-100 h-[549px] flex items-center justify-center">
-          <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-            <span className="text-gray-500 text-lg">Product Image</span>
-          </div>
+          {product.cover_image ? (
+            <img
+              src={product.cover_image}
+              alt={product.name}
+              className="object-cover w-full h-full"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+              <span className="text-gray-500 text-lg">Product Image</span>
+            </div>
+          )}
         </div>
 
         {/* Product Info Section */}

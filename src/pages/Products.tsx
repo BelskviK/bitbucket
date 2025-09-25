@@ -1,50 +1,47 @@
 // src/pages/Products.tsx
+import { useEffect, useState } from "react";
 import IconFilter from "../assets/FilterIcon.svg";
-import Product from "../components/Product"; // Import the display component
+import ProductCard from "../components/Product";
+import { ProductService } from "../services/ProductService";
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  cover_image?: string;
+}
 
 export default function Products() {
-  const mockProducts = [
-    {
-      id: 1,
-      name: "Kids' Curved Hilfiger Graphic T-Shirt",
-      price: 65,
-    },
-    {
-      id: 2,
-      name: "Men's Classic Fit T-Shirt",
-      price: 45,
-    },
-    {
-      id: 3,
-      name: "Women's Premium Cotton Shirt",
-      price: 75,
-    },
-    {
-      id: 4,
-      name: "Kids' Graphic Print Hoodie",
-      price: 85,
-    },
-    {
-      id: 5,
-      name: "Men's Athletic Shorts",
-      price: 55,
-    },
-    {
-      id: 6,
-      name: "Women's Yoga Pants",
-      price: 95,
-    },
-    {
-      id: 7,
-      name: "Men's Running Shoes",
-      price: 120,
-    },
-    {
-      id: 8,
-      name: "Women's Casual Dress",
-      price: 89,
-    },
-  ];
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await ProductService.getProducts({
+          // page: 1,
+          // price_from: 100,
+          // price_to: 500,
+          // sort: "price",
+        });
+        // Map API response to our Product interface
+        const formattedProducts = response.data.map((p: Product) => ({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          cover_image: p.cover_image,
+        }));
+        setProducts(formattedProducts);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <div className="px-[100px] py-20">
@@ -57,7 +54,7 @@ export default function Products() {
         {/* Filter and Sort Controls */}
         <div className="flex items-center gap-[32px]">
           <span className="text-gray-600 font-poppins font-normal text-[12px] leading-[100%] tracking-[0%]">
-            Showing 1-{mockProducts.length} of {mockProducts.length} results
+            Showing 1-{products.length} of {products.length} results
           </span>
 
           <div className="w-px h-4 bg-gray-300"></div>
@@ -88,9 +85,11 @@ export default function Products() {
 
       {/* Products Grid - 4 columns */}
       <div className="grid grid-cols-4 gap-8 justify-center">
-        {mockProducts.map((product) => (
-          <Product key={product.id} product={product} />
-        ))}
+        {loading
+          ? Array.from({ length: 8 }).map((_, i) => <ProductCard key={i} />)
+          : products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
       </div>
     </div>
   );
