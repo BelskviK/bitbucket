@@ -1,73 +1,45 @@
-# React + TypeScript + Vite
+# Online Shopping App 🛍️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive e-commerce application built with React 19, TypeScript, and Tailwind CSS, powered by Vite for lightning-fast development and builds.
 
-Currently, two official plugins are available:
+https://img.shields.io/badge/React-19.1.1-61DAFB?logo=react
+https://img.shields.io/badge/TypeScript-5.8.3-3178C6?logo=typescript
+https://img.shields.io/badge/Vite-7.1.7-646CFF?logo=vite
+https://img.shields.io/badge/Tailwind-3.4.17-06B6D4?logo=tailwindcss
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+✨ Features
+🔐 User Authentication - Secure register/login with session management
 
-## React Compiler
+🛍️ Product Catalog - Browse products with advanced filtering and sorting
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+🎯 Smart Price Filtering - Visual price range filters with active indicators
 
-## Expanding the ESLint configuration
+📱 Fully Responsive - Optimized for desktop, tablet, and mobile
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+🛒 Shopping Cart - Persistent cart management with real-time updates
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+⚡ Blazing Fast - Built with Vite for optimal performance
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+🎨 Modern UI - Clean design with Tailwind CSS and Poppins font
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+🚀 Quick Start
+Prerequisites
+Node.js (version 16 or higher)
+
+npm or yarn package manager
+
+Installation & Development
+Install dependencies
+
+```
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Start the development server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+npm run dev
+```
+
+Open your browser
+Navigate to http://localhost:5173 to view the application.
