@@ -1,6 +1,8 @@
 // src/components/CartModal.tsx
 import { useEffect } from "react";
+
 import CloseIcon from "../assets/CloseIcon.svg";
+import CartEmptyIcon from "../assets/CartEmptyIcon.svg";
 
 interface CartModalProps {
   isOpen: boolean;
@@ -44,24 +46,39 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           }`}
         >
           {/* Header */}
-          <div className="flex justify-between items-center p-6 border-b border-gray-200">
-            <h2 className="font-poppins font-semibold text-[24px] leading-[1]">
-              Your Cart
+          <div className="flex justify-between items-center p-6 mt-[20px] mb-[110px]">
+            <h2 className="font-poppins font-semibold text-[20px] leading-[20px] tracking-normal pl-[15px] ">
+              Shopping cart (0)
             </h2>
+
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="  hover:bg-gray-100 rounded-full transition-colors mr-[18px]"
             >
-              <img src={CloseIcon} alt="Close" className="w-6 h-6" />
+              <img src={CloseIcon} alt="Close" className="w-[18px] h-[18px]" />
             </button>
           </div>
 
           {/* Empty Content */}
-          <div className="h-full flex items-center justify-center p-6">
-            <div className="text-center text-gray-500">
-              <p className="font-poppins text-lg mb-2">Your cart is empty</p>
-              <p className="text-sm">Add some products to get started</p>
-            </div>
+          <div className="h-full flex flex-col items-center justify-start p-6">
+            <img
+              src={CartEmptyIcon}
+              alt=""
+              className=" w-[170px] h-[135px] mb-[30px]"
+            />
+            <h2 className="font-poppins font-semibold text-[24px] leading-[24px] tracking-normal mb-[20px]">
+              Ooops!
+            </h2>
+            <p className="font-poppins font-normal text-[14px] leading-[14px] tracking-normal text-center text-[#3E424A] mb-[61px]">
+              You’ve got nothing in your cart just yet...
+            </p>
+
+            <button
+              onClick={onClose}
+              className="w-[214px] h-[41px] flex items-center justify-center gap-[10px] px-[20px] py-[10px] rounded-[10px] bg-customOrange text-white font-poppins font-normal text-[14px] leading-[14px] tracking-normal"
+            >
+              Start shopping
+            </button>
           </div>
         </div>
       </div>
