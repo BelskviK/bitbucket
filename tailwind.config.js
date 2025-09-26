@@ -8,6 +8,8 @@ export default {
       },
       colors: {
         customOrange: "#FF4000",
+        customGray: "#E1DFE1",
+        customBlack: "#10151F",
       },
     },
   },
