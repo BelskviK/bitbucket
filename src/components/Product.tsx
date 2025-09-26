@@ -30,7 +30,7 @@ export default function Product({ product }: ProductProps) {
 
         {/* Product Info Section */}
         <div className="mt-[12px] h-[53px]">
-          <h3 className="font-poppins font-semibold text-[18px] leading-[100%] tracking-normal text-gray-900 mb-2 group-hover:text-orange-500 transition-colors">
+          <h3 className="font-poppins font-semibold text-[18px] leading-[100%] tracking-normal text-gray-900 mb-2  transition-colors">
             {product.name}
           </h3>
 
