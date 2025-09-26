@@ -1,16 +1,25 @@
 // src/pages/ProductPage.tsx
 import { useParams } from "react-router-dom";
 import { useProduct } from "../hooks/useProduct";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+
 import { useState, useMemo, useEffect, useRef } from "react";
 
 import DownButton from "../assets/DownButton.svg";
 import CartIcon from "../assets/CartIcon.svg";
 import DummyBrand from "../assets/image 6.svg";
 
+import CartModal from "../components/CartModal";
+
 export default function ProductPage() {
+  const navigate = useNavigate();
+
   const { id } = useParams<{ id: string }>();
-  // Remove navigate since it's not used
   const quantityRef = useRef<HTMLDivElement>(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const { user } = useAuth();
 
   const productId = useMemo(() => {
     if (!id) return NaN;
@@ -26,8 +35,18 @@ export default function ProductPage() {
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [showQuantityDropdown, setShowQuantityDropdown] = useState(false);
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
 
-  // Set default values when product loads
+    // Check if user is logged in
+    if (!user) {
+      // Redirect to login page if not authenticated
+      navigate("/login");
+      return;
+    }
+
+    setIsCartOpen(true);
+  };
   // Set default values when product loads
   useEffect(() => {
     if (product) {
@@ -36,11 +55,10 @@ export default function ProductPage() {
 
       setSelectedColor(availableColors[0] || "");
       setSelectedSize(availableSizes[0] || "");
-
-      // Start with first image (which corresponds to first color)
       setSelectedImageIndex(0);
     }
   }, [product]);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -62,7 +80,7 @@ export default function ProductPage() {
     };
   }, [showQuantityDropdown]);
 
-  // Get current main image - prioritize color-specific images if available
+  // Get current main image
   const getMainImage = () => {
     const images = product?.images || [];
     return images[selectedImageIndex] || product?.cover_image || "";
@@ -77,11 +95,12 @@ export default function ProductPage() {
     }
   };
 
-  // Handle color selection - remove unused index parameter
+  // Handle color selection
   const handleColorSelect = (color: string, colorIndex: number) => {
     setSelectedColor(color);
     setSelectedImageIndex(colorIndex);
   };
+
   // Handle size selection
   const handleSizeSelect = (size: string) => {
     setSelectedSize(size);
@@ -92,7 +111,8 @@ export default function ProductPage() {
     setQuantity(newQuantity);
     setShowQuantityDropdown(false);
   };
-  // Loading and error states remain the same...
+
+  // Loading and error states
   if (isNaN(productId)) {
     return (
       <div className="px-[100px] py-[30px]">Error: Invalid product ID</div>
@@ -148,7 +168,6 @@ export default function ProductPage() {
               </div>
             ))
           ) : (
-            // Fallback if no images
             <div className="w-full min-h-[161px] bg-gray-200 overflow-hidden">
               <img
                 src={product.cover_image}
@@ -197,13 +216,13 @@ export default function ProductPage() {
                           ? "border-2 border-customGray"
                           : "border-2 border-transparent"
                       }`}
-                      onClick={() => handleColorSelect(color, index)} // Pass index here
+                      onClick={() => handleColorSelect(color, index)}
                     >
                       <div
                         className="w-full h-full rounded-full"
                         style={{
                           backgroundColor: getColorValue(color),
-                          boxShadow: "0 0 10px 2px rgba(0,0,0,0.15)", // 360° shadow glow
+                          boxShadow: "0 0 10px 2px rgba(0,0,0,0.15)",
                         }}
                         title={color}
                       />
@@ -238,10 +257,9 @@ export default function ProductPage() {
                 </div>
               </div>
             )}
+
             {/* Quantity Selector */}
             <div ref={quantityRef}>
-              {" "}
-              {/* Wrap both elements */}
               <div className="relative">
                 <p className="font-poppins font-normal text-[16px] leading-[1] tracking-normal mb-[16px] py-1">
                   Quantity
@@ -280,16 +298,7 @@ export default function ProductPage() {
           <div className="flex justify-center items-center w-full">
             <button
               className="w-full rounded-[10px] bg-orange-500 hover:bg-orange-600 h-[59px] flex flex-row justify-center items-center gap-[12px] transition-colors"
-              onClick={(e) => {
-                e.preventDefault(); // Prevent form submission
-                console.log("Add to cart clicked:", {
-                  productId: product.id,
-                  color: selectedColor,
-                  size: selectedSize,
-                  quantity: quantity,
-                });
-                // We'll implement cart functionality later
-              }}
+              onClick={handleAddToCart} // Just pass the function reference
             >
               <img src={CartIcon} alt="Cart" className="w-[24px] h-[24px]" />
               <p className="font-poppins font-medium text-[18px] leading-[1] tracking-normal text-white">
@@ -298,7 +307,6 @@ export default function ProductPage() {
             </button>
           </div>
 
-          {/* Rest of the component remains the same... */}
           <div className="border-b border-gray-300 w-full"></div>
 
           {/* Description */}
@@ -330,11 +338,14 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+      {user && (
+        <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      )}
     </>
   );
 }
 
-// Helper function to map color names to actual colors (keep your existing function)
+// Helper function to map color names to actual colors
 function getColorValue(colorName: string): string {
   const colorMap: { [key: string]: string } = {
     blue: "#3b82f6",

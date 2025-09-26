@@ -26,6 +26,8 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Add this to prevent event bubbling
+
     setApiError("");
 
     let valid = true;
@@ -49,7 +51,6 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
     setIsLoading(true);
 
     try {
-      // Use the credentials object directly
       const response = await AuthService.login(
         credentials.email,
         credentials.password
@@ -65,6 +66,9 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
       const apiError = error as ApiError;
       setApiError(apiError.message || "Login failed. Please try again.");
       console.error("Login error:", error);
+
+      // Prevent any default behavior that might cause refresh
+      e.preventDefault();
     } finally {
       setIsLoading(false);
     }

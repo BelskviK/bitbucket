@@ -13,22 +13,27 @@ export const useProduct = (id: number) => {
       try {
         setLoading(true);
         setError(null);
+
+        // Validate ID
+        if (!id || id <= 0 || isNaN(id)) {
+          setError("Invalid product ID");
+          setLoading(false);
+          return;
+        }
+
         const productData = await ProductService.getProductById(id);
         setProduct(productData);
       } catch (err) {
-        setError("Failed to fetch product");
-        console.error(err);
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch product"
+        );
+        console.error("Product fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      fetchProduct();
-    } else {
-      setLoading(false);
-      setError("Product ID is required");
-    }
+    fetchProduct();
   }, [id]);
 
   return { product, loading, error };

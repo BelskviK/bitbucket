@@ -1,4 +1,4 @@
-// src\services\api.ts
+// src/services/api.ts
 import axios from "axios";
 
 // Base axios instance
@@ -21,14 +21,20 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Handle 401 globally
+// Handle 401 globally - but exclude auth endpoints
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Don't redirect for login/register endpoints
+    const isAuthEndpoint =
+      error.config?.url?.includes("/login") ||
+      error.config?.url?.includes("/register");
+
+    if (error.response?.status === 401 && !isAuthEndpoint) {
       localStorage.removeItem("authToken");
       window.location.href = "/login";
     }
+
     return Promise.reject(error);
   }
 );
