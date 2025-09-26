@@ -323,10 +323,10 @@ export default function ProductPage() {
               )}
             </div>
             <div>
-              {product.release_year && (
+              {product.brand && (
                 <div className="mb-[24px]">
                   <p className="font-poppins font-normal text-[16px] leading-[1] tracking-normal">
-                    Release Year: <span>{product.release_year}</span>
+                    Brand: <span>{product.brand.name}</span>
                   </p>
                 </div>
               )}
