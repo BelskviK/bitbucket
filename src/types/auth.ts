@@ -1,3 +1,4 @@
+// src\types\auth.ts
 // User related types
 export interface User {
   id: string;

@@ -1,6 +1,6 @@
 // src/hooks/useProduct.ts
 import { useState, useEffect } from "react";
-import { ProductService } from "../services/ProductService";
+import { ProductService } from "../services/productservice";
 import type { Product } from "../types";
 
 export const useProduct = (id: number) => {

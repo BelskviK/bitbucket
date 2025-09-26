@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "./authcontext";
 import type { AuthContextType, User } from "../types"; // Centralized imports
-import { getUser, setUser as setStoredUser } from "../services/UserService";
+import { getUser, setUser as setStoredUser } from "../services/userservice";
 
 interface AuthProviderProps {
   children: ReactNode;

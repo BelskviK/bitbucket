@@ -1,8 +1,9 @@
+// src\pages\Products.tsx
 import { useEffect, useState } from "react";
 import ProductsFilter from "../components/ProductsFilter";
 import ProductCard from "../components/Product";
 import Pagination from "../components/Pagination";
-import { ProductService } from "../services/ProductService";
+import { ProductService } from "../services/productservice";
 import type {
   Product,
   ProductQueryParams,

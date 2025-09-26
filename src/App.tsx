@@ -1,6 +1,6 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AuthProvider from "./context/AuthProvider";
+import AuthProvider from "./context/authprovider";
 // layout
 import Banner from "./components/Banner";
 

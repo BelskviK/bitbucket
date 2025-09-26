@@ -1,5 +1,5 @@
 // src/services/ProductService.ts
-import api from "./Api";
+import api from "./api";
 import type {
   ProductQueryParamsService,
   ApiResponse,

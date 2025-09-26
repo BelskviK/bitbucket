@@ -1,5 +1,5 @@
 import api from "./api";
-import { setUser, clearUser } from "./userService";
+import { setUser, clearUser } from "./userservice";
 
 export const AuthService = {
   login: async (email: string, password: string) => {
