@@ -1,15 +1,21 @@
+export interface Brand {
+  id: number;
+  name: string;
+  image: string;
+}
+
 export interface Product {
   id: number;
   name: string;
   price: number;
-  cover_image?: string;
+  cover_image: string;
   description?: string | null;
   release_year?: string;
-  images?: string[];
-  available_colors?: string[];
-  available_sizes?: string[] | null;
+  images: string[];
+  available_colors: string[];
+  available_sizes: string[];
+  brand?: Brand;
 }
-
 export interface FilterParams {
   price_from?: number;
   price_to?: number;
@@ -56,6 +62,7 @@ export interface ApiQueryParams {
   sort?: string;
 }
 
+// src/types/product.ts
 export interface ProductResponse {
   id: number;
   name: string;
@@ -65,5 +72,10 @@ export interface ProductResponse {
   images: string[];
   price: number;
   available_colors: string[];
-  available_sizes: string[] | null;
+  available_sizes: string[];
+  brand?: Brand;
+  total_price?: number;
+  quantity?: number;
+  color?: string;
+  size?: string;
 }

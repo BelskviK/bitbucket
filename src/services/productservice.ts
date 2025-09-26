@@ -1,11 +1,6 @@
 // src/services/ProductService.ts
 import api from "./api";
-import type {
-  ProductQueryParamsService,
-  ApiResponse,
-  Product,
-  ProductResponse,
-} from "../types";
+import type { ProductQueryParamsService, ApiResponse, Product } from "../types";
 
 interface ApiQueryParams {
   page?: number;
@@ -14,7 +9,6 @@ interface ApiQueryParams {
     price_to?: number;
   };
   sort?: string;
-  id?: number;
 }
 
 export const ProductService = {
@@ -41,30 +35,26 @@ export const ProductService = {
 
   getProductById: async (id: number): Promise<Product | null> => {
     try {
-      const response = await api.get<ApiResponse<ProductResponse>>(
-        "/products",
-        {
-          params: { id },
-        }
-      );
+      // Correct endpoint: /products/{id} instead of /products with params
+      const response = await api.get(`/products/${id}`);
 
-      // The API returns an array of products in data.data
-      const products = response.data.data;
-      const product = products.find((p: ProductResponse) => p.id === id);
+      // The API returns the product object directly, not nested in data.data
+      const productData = response.data;
 
-      if (!product) return null;
+      if (!productData) return null;
 
-      // Map the ProductResponse to Product interface with proper fallbacks
+      // Map the API response to Product interface
       return {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        cover_image: product.cover_image,
-        description: product.description || null,
-        release_year: product.release_year,
-        images: product.images || [],
-        available_colors: product.available_colors || [],
-        available_sizes: product.available_sizes || [],
+        id: productData.id,
+        name: productData.name,
+        price: productData.price,
+        cover_image: productData.cover_image,
+        description: productData.description || null,
+        release_year: productData.release_year,
+        images: productData.images || [],
+        available_colors: productData.available_colors || [],
+        available_sizes: productData.available_sizes || [],
+        brand: productData.brand, // Include brand information
       };
     } catch (error) {
       console.error("Error fetching product:", error);

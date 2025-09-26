@@ -8,7 +8,6 @@ import { useState, useMemo, useEffect, useRef } from "react";
 
 import DownButton from "../assets/DownButton.svg";
 import CartIcon from "../assets/CartIcon.svg";
-import DummyBrand from "../assets/image 6.svg";
 
 import CartModal from "../components/CartModal";
 
@@ -315,11 +314,13 @@ export default function ProductPage() {
               <h3 className="font-poppins font-medium text-[20px] leading-[1] tracking-normal">
                 Details
               </h3>
-              <img
-                src={DummyBrand}
-                alt="Brand"
-                className="w-[109px] h-[60px]"
-              />
+              {product.brand && (
+                <img
+                  src={product.brand.image}
+                  alt={product.brand.name}
+                  className="w-[109px] h-[60px] object-contain"
+                />
+              )}
             </div>
             <div>
               {product.release_year && (

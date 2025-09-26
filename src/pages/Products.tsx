@@ -1,4 +1,4 @@
-// src\pages\Products.tsx
+// src/pages/Products.tsx
 import { useEffect, useState } from "react";
 import ProductsFilter from "../components/ProductsFilter";
 import ProductCard from "../components/Product";
@@ -13,7 +13,7 @@ import type {
 } from "../types";
 
 export default function Products() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]); // Use full Product type
   const [loading, setLoading] = useState(true);
   const [queryParams, setQueryParams] = useState<ProductQueryParams>({});
   const [pagination, setPagination] = useState<PaginationData>({
@@ -32,14 +32,8 @@ export default function Products() {
           queryParams
         );
 
-        const formattedProducts = response.data.map((p: Product) => ({
-          id: p.id,
-          name: p.name,
-          price: p.price,
-          cover_image: p.cover_image,
-        }));
-
-        setProducts(formattedProducts);
+        // Use the full product data directly since it should match the Product type
+        setProducts(response.data);
         setPagination(response.meta);
       } catch (error) {
         console.error("Failed to fetch products:", error);

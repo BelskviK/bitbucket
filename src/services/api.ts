@@ -1,4 +1,4 @@
-// src/services/api.ts
+// src\services\api.ts
 import axios from "axios";
 
 // Base axios instance
@@ -21,7 +21,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Handle 401 globally - but exclude auth endpoints
+// Handle 401 globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
