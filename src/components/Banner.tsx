@@ -67,11 +67,7 @@ export default function Banner() {
       </div>
 
       {/* Cart Modal */}
-      <CartModal
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        ProductCount={3}
-      />
+      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   );
 }

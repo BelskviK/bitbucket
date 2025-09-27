@@ -10,16 +10,21 @@ import type {
 
 export const CartService = {
   /**
-   * Get user's cart
+   * Get user's cart - returns array directly
    */
   async getCart(): Promise<CartResponse> {
-    const response = await api.get("/cart");
-    return response.data;
+    console.log("🛒 CartService: Fetching cart...");
+    try {
+      const response = await api.get<CartResponse>("/cart");
+
+      return response.data;
+    } catch (error) {
+      console.error("❌ CartService: Failed to fetch cart:", error);
+      throw error;
+    }
   },
 
-  /**
-   * Add product to cart
-   */
+  // ... keep other methods the same
   async addToCart(
     productId: number,
     data: AddToCartRequest

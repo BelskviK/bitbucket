@@ -340,11 +340,7 @@ export default function ProductPage() {
         </div>
       </div>
       {user && (
-        <CartModal
-          isOpen={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
-          ProductCount={3}
-        />
+        <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       )}
     </>
   );

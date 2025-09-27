@@ -3,29 +3,44 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import CartItem from "./CartItem";
 import { useState } from "react";
 import CongratulationModal from "./CongratulationModal";
-import type { CartCalculatorProps } from "../types";
+import type { CartCalculatorProps, CartResponse } from "../types";
+
 export default function CartCalculator({
-  ProductCount,
+  cartData,
   onClose,
-}: CartCalculatorProps) {
+}: CartCalculatorProps & { cartData: CartResponse | null }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // decide heights based on path
   const isCheckout = location.pathname === "/checkout";
   const CartItemHeight = isCheckout ? 360 : 641;
   const gap = isCheckout ? 81 : 100;
   const ButtonContent = isCheckout ? "Pay" : "Go to checkout";
 
+  if (!cartData || cartData.length === 0) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center">
+        <p className="font-poppins font-normal text-[14px] text-[#3E424A]">
+          Your cart is empty
+        </p>
+      </div>
+    );
+  }
+
+  const subtotal = cartData.reduce(
+    (sum, item) => sum + (item.total_price || 0),
+    0
+  );
+  const deliveryCost = 5;
+  const totalCost = subtotal + deliveryCost;
+
   const handleButtonClick = () => {
     if (isCheckout) {
-      // If on checkout page, close the cart modal and open the congratulation modal
-      onClose(); // Close the cart modal
-      setIsModalOpen(true); // Open the congratulation modal
+      onClose();
+      setIsModalOpen(true);
     } else {
-      // Otherwise, navigate to checkout and close the cart modal
-      onClose(); // Close the cart modal
+      onClose();
       navigate("/checkout");
     }
   };
@@ -41,8 +56,8 @@ export default function CartCalculator({
           className="flex flex-col space-y-[36px] overflow-y-auto overflow-x-hidden"
           style={{ height: `${CartItemHeight}px` }}
         >
-          {Array.from({ length: ProductCount }).map((_, idx) => (
-            <CartItem key={idx} id={idx + 1} />
+          {cartData.map((item, index) => (
+            <CartItem key={item.id || index} item={item} />
           ))}
         </div>
         <div
@@ -52,17 +67,17 @@ export default function CartCalculator({
           <div className="flex flex-col h-[110px] w-full gap-[26px]">
             <div className="flex flex-row justify-between items-center font-poppins font-normal text-[16px] leading-[16px] tracking-[0%] text-[#3E424A]">
               <p>Items subtotal</p>
-              <p>$ 50</p>
+              <p>$ {subtotal.toFixed(2)}</p>
             </div>
 
             <div className="flex flex-row justify-between items-center font-poppins font-normal text-[16px] leading-[16px] tracking-[0%] text-[#3E424A]">
               <p>Delivery</p>
-              <p>$ 5</p>
+              <p>$ {deliveryCost.toFixed(2)}</p>
             </div>
 
             <div className="flex flex-row justify-between items-center font-poppins font-semibold text-[20px] leading-[20px] tracking-[0%] text-[#10151F]">
               <p>Total</p>
-              <p>$55</p>
+              <p>${totalCost.toFixed(2)}</p>
             </div>
           </div>
 
@@ -86,7 +101,6 @@ export default function CartCalculator({
         </div>
       </div>
 
-      {/* Congratulation Modal */}
       <CongratulationModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </>
   );

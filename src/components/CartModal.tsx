@@ -1,33 +1,58 @@
 // src/components/CartModal.tsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CloseIcon from "../assets/CloseIcon.svg";
 import CartEmptyIcon from "../assets/CartEmptyIcon.svg";
 import CartCalculator from "./CartCalculator";
-import type { CartModalProps } from "../types";
+import type { CartModalProps, CartResponse } from "../types";
+import { cartManager } from "../services/CartManager";
+import { useAuth } from "../hooks/useAuth";
 
 export default function CartModal({ isOpen, onClose }: CartModalProps) {
-  // Example cart count (make this dynamic later from state/context)
-  const ProductCount: number = 2;
+  const [cartData, setCartData] = useState<CartResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
-  // Prevent body scroll when modal is open
+  useEffect(() => {
+    const unsubscribe = cartManager.subscribe(setCartData);
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      if (isOpen && user) {
+        setIsLoading(true);
+        try {
+          await cartManager.fetchCart();
+        } catch (error) {
+          console.error("Failed to load cart:", error);
+          setCartData(null);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchCart();
+  }, [isOpen, user]);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
-  // Close modal when clicking on overlay
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
+
+  const productCount = cartData?.length || 0;
 
   return (
     <>
@@ -40,16 +65,15 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
       >
         {/* Modal with slide animation */}
         <div
-          className={`fixed right-0 top-0 h-full w-[540px] h-full bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${
+          className={`fixed right-0 top-0 h-full w-[540px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
           {/* Header */}
           <div className="flex justify-between items-center p-6 mt-[20px] mb-[42px]">
-            <h2 className="font-poppins font-semibold text-[20px] leading-[20px] tracking-normal pl-[15px] ">
-              Shopping cart ({ProductCount})
+            <h2 className="font-poppins font-semibold text-[20px] leading-[20px] tracking-normal pl-[15px]">
+              Shopping cart ({productCount})
             </h2>
-
             <button
               onClick={onClose}
               className="hover:bg-gray-100 rounded-full transition-colors mr-[18px]"
@@ -59,12 +83,20 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           </div>
 
           {/* Conditional Content */}
-          {ProductCount === 0 ? (
+          {isLoading && (
+            <div className="flex items-center justify-center h-40">
+              <p className="font-poppins font-normal text-[14px]">
+                Loading cart...
+              </p>
+            </div>
+          )}
+
+          {!isLoading && productCount === 0 ? (
             <div className="h-full flex flex-col items-center justify-start p-6 mt-[110px]">
               <img
                 src={CartEmptyIcon}
                 alt=""
-                className=" w-[170px] h-[135px] mb-[30px]"
+                className="w-[170px] h-[135px] mb-[30px]"
               />
               <h2 className="font-poppins font-semibold text-[24px] leading-[24px] tracking-normal mb-[20px]">
                 Ooops!
@@ -72,7 +104,6 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
               <p className="font-poppins font-normal text-[14px] leading-[14px] tracking-normal text-center text-[#3E424A] mb-[61px]">
                 You've got nothing in your cart just yet...
               </p>
-
               <button
                 onClick={onClose}
                 className="w-[214px] h-[41px] flex items-center justify-center gap-[10px] px-[20px] py-[10px] rounded-[10px] bg-customOrange text-white font-poppins font-normal text-[14px] leading-[14px] tracking-normal"
@@ -81,10 +112,12 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
               </button>
             </div>
           ) : (
-            <div className="px-[40px] ">
-              {/* Pass onClose prop to CartCalculator */}
-              <CartCalculator ProductCount={ProductCount} onClose={onClose} />
-            </div>
+            !isLoading &&
+            cartData && (
+              <div className="px-[40px]">
+                <CartCalculator cartData={cartData} onClose={onClose} />
+              </div>
+            )
           )}
         </div>
       </div>

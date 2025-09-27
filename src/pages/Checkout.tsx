@@ -1,9 +1,72 @@
-// src\pages\Checkout.tsx
+// src/pages/Checkout.tsx
+import { useEffect, useState } from "react";
 import EnvelopIcon from "../assets/EnvelopeIcon.svg";
 import CartCalculator from "../components/CartCalculator";
-const ProductCount: number = 2;
+import type { CartModalProps, CartResponse } from "../types";
+import { cartManager } from "../services/CartManager";
+import { useAuth } from "../hooks/useAuth";
 
-export default function Checkout() {
+export default function Checkout({ onClose }: CartModalProps) {
+  const [cartData, setCartData] = useState<CartResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    // Subscribe to cart changes
+    const unsubscribe = cartManager.subscribe(setCartData);
+
+    // Fetch cart data when component mounts
+    const fetchCart = async () => {
+      if (user) {
+        setIsLoading(true);
+        try {
+          await cartManager.fetchCart();
+        } catch (error) {
+          console.error("Failed to load cart:", error);
+          setCartData(null);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCart();
+
+    return unsubscribe;
+  }, [user]);
+
+  if (isLoading) {
+    return (
+      <div className="px-[100px] flex flex-col justify-center items-center">
+        <div className="font-poppins font-semibold text-[42px] leading-[100%] tracking-[0] text-[#10151F] self-start mt-[84px] mb-[51px]">
+          Checkout
+        </div>
+        <div className="flex items-center justify-center h-64">
+          <p className="font-poppins font-normal text-[14px]">
+            Loading cart...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!cartData || cartData.length === 0) {
+    return (
+      <div className="px-[100px] flex flex-col justify-center items-center">
+        <div className="font-poppins font-semibold text-[42px] leading-[100%] tracking-[0] text-[#10151F] self-start mt-[84px] mb-[51px]">
+          Checkout
+        </div>
+        <div className="flex items-center justify-center h-64">
+          <p className="font-poppins font-normal text-[14px]">
+            Your cart is empty
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="px-[100px] flex flex-col justify-center items-center">
       {/* Checkout Title */}
@@ -13,12 +76,12 @@ export default function Checkout() {
 
       <div className="flex flex-row justify-between items-start w-full h-[635px]">
         {/* Left Section - Form */}
-        <div className="bg-[#F8F6F7] w-[1129px]  h-full rounded-[16px] py-[78px] px-[47px]">
+        <div className="bg-[#F8F6F7] w-[1129px] h-full rounded-[16px] py-[78px] px-[47px]">
           <div className="font-poppins font-medium text-[22px] leading-[100%] tracking-[0] text-[#3E424A] mb-[52px]">
             Order details
           </div>
 
-          <form className="space-y-[33px] w-[580px]  ">
+          <form className="space-y-[33px] w-[580px]">
             {/* Name + Surname */}
             <div className="flex gap-[20px]">
               <input
@@ -82,8 +145,8 @@ export default function Checkout() {
         </div>
 
         {/* Right Section - Summary */}
-        <div className="  w-[460px] h-full  rounded-[16px] ">
-          <CartCalculator ProductCount={ProductCount} onClose={() => {}} />
+        <div className="w-[460px] h-full rounded-[16px]">
+          <CartCalculator cartData={cartData} onClose={onClose} />
         </div>
       </div>
     </div>

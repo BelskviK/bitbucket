@@ -1,24 +1,20 @@
 // src/types/cart.ts
 export interface CartItem {
   id: number;
-  product_id: number;
+  name: string;
+  description: string;
+  release_year: string;
+  cover_image: string;
+  images: string[];
+  price: number;
+  available_colors: string[];
+  available_sizes: string[];
+  total_price: number;
   quantity: number;
   color: string;
   size: string;
-  product: {
-    id: number;
-    name: string;
-    price: number;
-    cover_image: string;
-    images: string[];
-  };
 }
-
-export interface CartResponse {
-  items: CartItem[];
-  total_price: number;
-  total_items: number;
-}
+export type CartResponse = CartItem[];
 
 export interface AddToCartRequest {
   quantity: number;
@@ -44,14 +40,12 @@ export interface CheckoutResponse {
   total_amount: number;
 }
 
-// Component-specific interfaces
 export interface CartModalProps {
   isOpen: boolean;
-  ProductCount: number;
   onClose: () => void;
 }
 
 export interface CartCalculatorProps {
-  ProductCount: number;
   onClose: () => void;
+  cartData: CartResponse | null;
 }
