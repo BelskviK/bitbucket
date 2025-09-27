@@ -36,12 +36,10 @@ export default function CartCalculator({
   if (!cartData || cartData.length === 0) {
     const handleStartShopping = () => {
       if (isCheckout) {
-        // If we're on checkout page, navigate to products
         navigate("/products");
       } else {
-        // If we're in modal (any other page), close modal and stay on current page
         if (onClose) {
-          onClose(); // Only call onClose if it exists (modal context)
+          onClose();
         }
       }
     };
@@ -79,10 +77,10 @@ export default function CartCalculator({
 
   const handleButtonClick = () => {
     if (isCheckout) {
-      if (onClose) onClose(); // Close modal if it exists
+      if (onClose) onClose();
       setIsModalOpen(true);
     } else {
-      if (onClose) onClose(); // Close modal if it exists
+      if (onClose) onClose();
       navigate("/checkout");
     }
   };
@@ -98,9 +96,11 @@ export default function CartCalculator({
           className="flex flex-col space-y-[36px] overflow-y-auto overflow-x-hidden"
           style={{ height: `${CartItemHeight}px` }}
         >
-          {cartData.map((item, index) => (
-            <CartItem key={item.id || index} item={item} />
-          ))}
+          {cartData.map((item, index) => {
+            // Create a unique key using product ID, color, size, and index as fallback
+            const uniqueKey = `${item.id}-${item.color}-${item.size}-${index}`;
+            return <CartItem key={uniqueKey} item={item} />;
+          })}
         </div>
         <div
           className="flex flex-col justify-end items-center h-[270px]"
@@ -133,7 +133,7 @@ export default function CartCalculator({
           ) : (
             <Link to="/checkout">
               <button
-                onClick={() => onClose && onClose()} // Only call if exists
+                onClick={() => onClose && onClose()}
                 className="flex items-center justify-center w-[460px] h-[59px] rounded-[10px] px-[60px] py-[16px] gap-[10px] bg-customOrange font-poppins font-medium text-[18px] leading-[18px] tracking-[0%] text-white"
               >
                 {ButtonContent}

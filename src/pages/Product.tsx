@@ -3,20 +3,45 @@ import { useParams } from "react-router-dom";
 import { useProduct } from "../hooks/useProduct";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-
 import { useState, useMemo, useEffect, useRef } from "react";
-
 import DownButton from "../assets/DownButton.svg";
 import CartIcon from "../assets/CartIcon.svg";
-
 import CartModal from "../components/CartModal";
+import { CartService } from "../services/cartservice";
+import { cartManager } from "../services/CartManager";
+import type { AddToCartRequest } from "../types";
+
+// Helper function to map color names to actual colors
+function getColorValue(colorName: string): string {
+  const colorMap: { [key: string]: string } = {
+    blue: "#3b82f6",
+    red: "#ef4444",
+    green: "#10b981",
+    black: "#000000",
+    white: "#ffffff",
+    grey: "#6b7280",
+    gray: "#6b7280",
+    pink: "#ec4899",
+    orange: "#f97316",
+    purple: "#8b5cf6",
+    yellow: "#eab308",
+    "navy blue": "#1e3a8a",
+    "baby pink": "#fbcfe8",
+    beige: "#f5f5dc",
+    multi: "#8b5cf6",
+  };
+
+  const lowerColor = colorName.toLowerCase();
+  return colorMap[lowerColor] || "#d1d5db";
+}
 
 export default function ProductPage() {
   const navigate = useNavigate();
-
   const { id } = useParams<{ id: string }>();
   const quantityRef = useRef<HTMLDivElement>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [addToCartError, setAddToCartError] = useState<string | null>(null);
 
   const { user } = useAuth();
 
@@ -34,18 +59,79 @@ export default function ProductPage() {
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [showQuantityDropdown, setShowQuantityDropdown] = useState(false);
-  const handleAddToCart = (e: React.MouseEvent) => {
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
 
     // Check if user is logged in
     if (!user) {
-      // Redirect to login page if not authenticated
       navigate("/login");
       return;
     }
 
-    setIsCartOpen(true);
+    // Validate selections
+    if (!selectedColor || !selectedSize) {
+      setAddToCartError("Please select color and size");
+      return;
+    }
+
+    if (quantity < 1) {
+      setAddToCartError("Please select a valid quantity");
+      return;
+    }
+
+    setIsAddingToCart(true);
+    setAddToCartError(null);
+    try {
+      // Prepare the add to cart request data
+      const addToCartData: AddToCartRequest = {
+        quantity: quantity,
+        color: selectedColor,
+        size: selectedSize,
+      };
+
+      console.log("🛒 Adding to cart:", {
+        productId,
+        data: addToCartData,
+      });
+
+      // Call the cart service
+      await CartService.addToCart(productId, addToCartData);
+
+      // Refresh the cart data
+      await cartManager.fetchCart();
+
+      // Open the cart modal
+      setIsCartOpen(true);
+
+      // Optional: Show success message
+      console.log("✅ Product added to cart successfully!");
+    } catch (error: unknown) {
+      console.error("❌ Failed to add product to cart:", error);
+
+      // Type-safe error handling
+      if (error instanceof Error) {
+        setAddToCartError(error.message);
+      } else if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof error.response === "object" &&
+        error.response !== null &&
+        "data" in error.response &&
+        typeof error.response.data === "object" &&
+        error.response.data !== null &&
+        "message" in error.response.data
+      ) {
+        setAddToCartError((error.response.data as { message: string }).message);
+      } else {
+        setAddToCartError("Failed to add product to cart. Please try again.");
+      }
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
+
   // Set default values when product loads
   useEffect(() => {
     if (product) {
@@ -55,6 +141,7 @@ export default function ProductPage() {
       setSelectedColor(availableColors[0] || "");
       setSelectedSize(availableSizes[0] || "");
       setSelectedImageIndex(0);
+      setAddToCartError(null); // Clear any previous errors
     }
   }, [product]);
 
@@ -78,6 +165,13 @@ export default function ProductPage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showQuantityDropdown]);
+
+  // Clear error when selections change
+  useEffect(() => {
+    if (addToCartError) {
+      setAddToCartError(null);
+    }
+  }, [selectedColor, selectedSize, quantity, addToCartError]);
 
   // Get current main image
   const getMainImage = () => {
@@ -293,15 +387,29 @@ export default function ProductPage() {
             </div>
           </div>
 
+          {/* Error Message */}
+          {addToCartError && (
+            <div className="w-full p-3 bg-red-50 border border-red-200 rounded-[10px]">
+              <p className="font-poppins font-normal text-[14px] text-red-600 text-center">
+                {addToCartError}
+              </p>
+            </div>
+          )}
+
           {/* Add to Cart Button */}
           <div className="flex justify-center items-center w-full">
             <button
-              className="w-full rounded-[10px] bg-orange-500 hover:bg-orange-600 h-[59px] flex flex-row justify-center items-center gap-[12px] transition-colors"
-              onClick={handleAddToCart} // Just pass the function reference
+              className={`w-full rounded-[10px] h-[59px] flex flex-row justify-center items-center gap-[12px] transition-colors ${
+                isAddingToCart
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-orange-500 hover:bg-orange-600"
+              }`}
+              onClick={handleAddToCart}
+              disabled={isAddingToCart}
             >
               <img src={CartIcon} alt="Cart" className="w-[24px] h-[24px]" />
               <p className="font-poppins font-medium text-[18px] leading-[1] tracking-normal text-white">
-                Add to cart
+                {isAddingToCart ? "Adding..." : "Add to cart"}
               </p>
             </button>
           </div>
@@ -339,33 +447,11 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {/* Cart Modal */}
       {user && (
         <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       )}
     </>
   );
-}
-
-// Helper function to map color names to actual colors
-function getColorValue(colorName: string): string {
-  const colorMap: { [key: string]: string } = {
-    blue: "#3b82f6",
-    red: "#ef4444",
-    green: "#10b981",
-    black: "#000000",
-    white: "#ffffff",
-    grey: "#6b7280",
-    gray: "#6b7280",
-    pink: "#ec4899",
-    orange: "#f97316",
-    purple: "#8b5cf6",
-    yellow: "#eab308",
-    "navy blue": "#1e3a8a",
-    "baby pink": "#fbcfe8",
-    beige: "#f5f5dc",
-    multi: "#8b5cf6",
-  };
-
-  const lowerColor = colorName.toLowerCase();
-  return colorMap[lowerColor] || "#d1d5db";
 }
