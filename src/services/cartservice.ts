@@ -31,13 +31,19 @@ export const CartService = {
   },
 
   /**
-   * Update cart item quantity
+   * Update specific cart item quantity with color and size identification
    */
   async updateCartItem(
     productId: number,
+    color: string,
+    size: string,
     data: UpdateCartItemRequest
   ): Promise<CartResponse> {
-    const response = await api.patch(`/cart/products/${productId}`, data);
+    const response = await api.patch(`/cart/products/${productId}`, {
+      ...data,
+      color,
+      size,
+    });
     return response.data;
   },
 

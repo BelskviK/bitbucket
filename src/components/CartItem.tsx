@@ -39,7 +39,10 @@ export default function CartItem({ item }: CartItemProps) {
         const newQuantity = quantity - 1;
         setQuantity(newQuantity);
 
-        await CartService.updateCartItem(item.id, { quantity: newQuantity });
+        // Pass color and size to identify the specific cart item
+        await CartService.updateCartItem(item.id, item.color, item.size, {
+          quantity: newQuantity,
+        });
         await cartManager.fetchCart();
       } catch (error) {
         console.error("Failed to update quantity:", error);
@@ -56,7 +59,10 @@ export default function CartItem({ item }: CartItemProps) {
       const newQuantity = quantity + 1;
       setQuantity(newQuantity);
 
-      await CartService.updateCartItem(item.id, { quantity: newQuantity });
+      // Pass color and size to identify the specific cart item
+      await CartService.updateCartItem(item.id, item.color, item.size, {
+        quantity: newQuantity,
+      });
       await cartManager.fetchCart();
     } catch (error) {
       console.error("Failed to update quantity:", error);
@@ -104,7 +110,7 @@ export default function CartItem({ item }: CartItemProps) {
             </span>
           </div>
           <p className="font-poppins font-semibold text-[18px] leading-[18px] tracking-[0%] text-[#10151F] text-right w-auto self-start whitespace-nowrap flex-shrink-0">
-            $ {item.total_price || item.price || 0}
+            $ {(item.total_price || item.price || 0).toFixed(2)}
           </p>
         </div>
 
