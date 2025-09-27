@@ -15,7 +15,6 @@ export const CartService = {
   async getCart(): Promise<CartResponse> {
     try {
       const response = await api.get<CartResponse>("/cart");
-
       return response.data;
     } catch (error) {
       console.error("❌ CartService: Failed to fetch cart:", error);
@@ -23,7 +22,6 @@ export const CartService = {
     }
   },
 
-  // ... keep other methods the same
   async addToCart(
     productId: number,
     data: AddToCartRequest
@@ -44,10 +42,16 @@ export const CartService = {
   },
 
   /**
-   * Remove product from cart
+   * Remove specific product variant from cart
    */
-  async removeFromCart(productId: number): Promise<CartResponse> {
-    const response = await api.delete(`/cart/products/${productId}`);
+  async removeFromCart(
+    productId: number,
+    color: string,
+    size: string
+  ): Promise<CartResponse> {
+    const response = await api.delete(`/cart/products/${productId}`, {
+      data: { color, size },
+    });
     return response.data;
   },
 
