@@ -1,16 +1,23 @@
 // src/components/CartCalculator.tsx
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CartItem from "./CartItem";
 import { useState } from "react";
 import CongratulationModal from "./CongratulationModal";
 import CartEmptyIcon from "../assets/CartEmptyIcon.svg";
 import type { CartCalculatorProps, CartResponse } from "../types";
 
+interface CartCalculatorEnhancedProps extends CartCalculatorProps {
+  onCheckout?: () => Promise<boolean>;
+  isSubmitting?: boolean;
+}
+
 export default function CartCalculator({
   cartData,
   onClose,
   isLoading = false,
-}: CartCalculatorProps & {
+  onCheckout,
+  isSubmitting = false,
+}: CartCalculatorEnhancedProps & {
   cartData: CartResponse | null;
   isLoading?: boolean;
 }) {
@@ -21,7 +28,11 @@ export default function CartCalculator({
   const isCheckout = location.pathname === "/checkout";
   const CartItemHeight = isCheckout ? 360 : 641;
   const gap = isCheckout ? 81 : 100;
-  const ButtonContent = isCheckout ? "Pay" : "Go to checkout";
+  const ButtonContent = isCheckout
+    ? isSubmitting
+      ? "Processing..."
+      : "Pay"
+    : "Go to checkout";
 
   // Loading state
   if (isLoading) {
@@ -75,10 +86,18 @@ export default function CartCalculator({
   const deliveryCost = 5;
   const totalCost = subtotal + deliveryCost;
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     if (isCheckout) {
-      if (onClose) onClose();
-      setIsModalOpen(true);
+      if (onCheckout) {
+        const success = await onCheckout();
+        if (success) {
+          if (onClose) onClose();
+          setIsModalOpen(true);
+        }
+      } else {
+        if (onClose) onClose();
+        setIsModalOpen(true);
+      }
     } else {
       if (onClose) onClose();
       navigate("/checkout");
@@ -97,7 +116,6 @@ export default function CartCalculator({
           style={{ height: `${CartItemHeight}px` }}
         >
           {cartData.map((item, index) => {
-            // Create a unique key using product ID, color, size, and index as fallback
             const uniqueKey = `${item.id}-${item.color}-${item.size}-${index}`;
             return <CartItem key={uniqueKey} item={item} />;
           })}
@@ -109,37 +127,31 @@ export default function CartCalculator({
           <div className="flex flex-col h-[110px] w-full gap-[26px]">
             <div className="flex flex-row justify-between items-center font-poppins font-normal text-[16px] leading-[16px] tracking-[0%] text-[#3E424A]">
               <p>Items subtotal</p>
-              <p>$ {subtotal}</p>
+              <p>$ {subtotal.toFixed(2)}</p>
             </div>
 
             <div className="flex flex-row justify-between items-center font-poppins font-normal text-[16px] leading-[16px] tracking-[0%] text-[#3E424A]">
               <p>Delivery</p>
-              <p>$ {deliveryCost}</p>
+              <p>$ {deliveryCost.toFixed(2)}</p>
             </div>
 
             <div className="flex flex-row justify-between items-center font-poppins font-semibold text-[20px] leading-[20px] tracking-[0%] text-[#10151F]">
               <p>Total</p>
-              <p>${totalCost}</p>
+              <p>${totalCost.toFixed(2)}</p>
             </div>
           </div>
 
-          {isCheckout ? (
-            <button
-              onClick={handleButtonClick}
-              className="flex items-center justify-center w-[460px] h-[59px] rounded-[10px] px-[60px] py-[16px] gap-[10px] bg-customOrange font-poppins font-medium text-[18px] leading-[18px] tracking-[0%] text-white"
-            >
-              {ButtonContent}
-            </button>
-          ) : (
-            <Link to="/checkout">
-              <button
-                onClick={() => onClose && onClose()}
-                className="flex items-center justify-center w-[460px] h-[59px] rounded-[10px] px-[60px] py-[16px] gap-[10px] bg-customOrange font-poppins font-medium text-[18px] leading-[18px] tracking-[0%] text-white"
-              >
-                {ButtonContent}
-              </button>
-            </Link>
-          )}
+          <button
+            onClick={handleButtonClick}
+            disabled={isSubmitting}
+            className={`flex items-center justify-center w-[460px] h-[59px] rounded-[10px] px-[60px] py-[16px] gap-[10px] font-poppins font-medium text-[18px] leading-[18px] tracking-[0%] text-white ${
+              isSubmitting
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-customOrange hover:bg-orange-600"
+            }`}
+          >
+            {ButtonContent}
+          </button>
         </div>
       </div>
 

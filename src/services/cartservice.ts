@@ -68,12 +68,4 @@ export const CartService = {
     const response = await api.post("/cart/checkout", data);
     return response.data;
   },
-
-  /**
-   * Clear entire cart
-   */
-  async clearCart(): Promise<CartResponse> {
-    const response = await api.delete("/cart");
-    return response.data;
-  },
 };

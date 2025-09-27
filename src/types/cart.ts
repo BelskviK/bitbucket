@@ -45,8 +45,11 @@ export interface CartModalProps {
   onClose: () => void;
 }
 
+// src/types/cart.ts
 export interface CartCalculatorProps {
   onClose?: () => void;
   cartData: CartResponse | null;
   isLoading?: boolean;
+  onCheckout?: () => Promise<boolean>;
+  isSubmitting?: boolean;
 }
