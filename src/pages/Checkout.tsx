@@ -1,7 +1,7 @@
 // src\pages\Checkout.tsx
 import EnvelopIcon from "../assets/EnvelopeIcon.svg";
 import CartCalculator from "../components/CartCalculator";
-const cartCount: number = 2;
+const ProductCount: number = 2;
 
 export default function Checkout() {
   return (
@@ -83,7 +83,7 @@ export default function Checkout() {
 
         {/* Right Section - Summary */}
         <div className="  w-[460px] h-full  rounded-[16px] ">
-          <CartCalculator cartCount={cartCount} />
+          <CartCalculator ProductCount={ProductCount} onClose={() => {}} />
         </div>
       </div>
     </div>

@@ -1,16 +1,19 @@
 // src/components/Banner.tsx
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react"; // Add this import
 import Logo from "../assets/Logo.png";
 import loginIcon from "../assets/LoginIcon.svg";
 import ProfileImg from "./ProfileImg";
 import { useAuth } from "../hooks/useAuth";
 import CartIcon from "../assets/CartIconBanner.svg";
-import CartModal from "./CartModal"; // Add this import
+import CartModal from "./CartModal";
 
 export default function Banner() {
   const { user } = useAuth();
-  const [isCartOpen, setIsCartOpen] = useState(false); // Add cart modal state
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const location = useLocation();
+  const displayCartIcon = location.pathname === "/checkout";
 
   const handleCartClick = () => {
     if (!user) {
@@ -46,12 +49,16 @@ export default function Banner() {
         ) : (
           <div className="flex flex-row justify-center items-center align-center gap-[20px]">
             {/* Cart Icon with click handler */}
-            <button
-              onClick={handleCartClick}
-              className="w-[24px] h-[24px] hover:opacity-70 transition-opacity"
-            >
-              <img src={CartIcon} alt="Shopping Cart" />
-            </button>
+
+            {!displayCartIcon && (
+              <button
+                onClick={handleCartClick}
+                className="w-[24px] h-[24px] hover:opacity-70 transition-opacity"
+              >
+                <img src={CartIcon} alt="Shopping Cart" />
+              </button>
+            )}
+
             <div className="w-[40px] h-[40px]">
               <ProfileImg avatar={user?.avatar} />
             </div>
@@ -60,7 +67,11 @@ export default function Banner() {
       </div>
 
       {/* Cart Modal */}
-      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartModal
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        ProductCount={3}
+      />
     </header>
   );
 }

@@ -43,3 +43,15 @@ export interface CheckoutResponse {
   message: string;
   total_amount: number;
 }
+
+// Component-specific interfaces
+export interface CartModalProps {
+  isOpen: boolean;
+  ProductCount: number;
+  onClose: () => void;
+}
+
+export interface CartCalculatorProps {
+  ProductCount: number;
+  onClose: () => void;
+}

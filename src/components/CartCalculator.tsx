@@ -3,12 +3,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import CartItem from "./CartItem";
 import { useState } from "react";
 import CongratulationModal from "./CongratulationModal";
-
-interface CartCalculatorProps {
-  cartCount: number;
-}
-
-export default function CartCalculator({ cartCount }: CartCalculatorProps) {
+import type { CartCalculatorProps } from "../types";
+export default function CartCalculator({
+  ProductCount,
+  onClose,
+}: CartCalculatorProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,10 +20,12 @@ export default function CartCalculator({ cartCount }: CartCalculatorProps) {
 
   const handleButtonClick = () => {
     if (isCheckout) {
-      // If on checkout page, open the modal
-      setIsModalOpen(true);
+      // If on checkout page, close the cart modal and open the congratulation modal
+      onClose(); // Close the cart modal
+      setIsModalOpen(true); // Open the congratulation modal
     } else {
-      // Otherwise, navigate to checkout
+      // Otherwise, navigate to checkout and close the cart modal
+      onClose(); // Close the cart modal
       navigate("/checkout");
     }
   };
@@ -40,7 +41,7 @@ export default function CartCalculator({ cartCount }: CartCalculatorProps) {
           className="flex flex-col space-y-[36px] overflow-y-auto overflow-x-hidden"
           style={{ height: `${CartItemHeight}px` }}
         >
-          {Array.from({ length: cartCount }).map((_, idx) => (
+          {Array.from({ length: ProductCount }).map((_, idx) => (
             <CartItem key={idx} id={idx + 1} />
           ))}
         </div>
@@ -74,7 +75,10 @@ export default function CartCalculator({ cartCount }: CartCalculatorProps) {
             </button>
           ) : (
             <Link to="/checkout">
-              <button className="flex items-center justify-center w-[460px] h-[59px] rounded-[10px] px-[60px] py-[16px] gap-[10px] bg-customOrange font-poppins font-medium text-[18px] leading-[18px] tracking-[0%] text-white">
+              <button
+                onClick={onClose}
+                className="flex items-center justify-center w-[460px] h-[59px] rounded-[10px] px-[60px] py-[16px] gap-[10px] bg-customOrange font-poppins font-medium text-[18px] leading-[18px] tracking-[0%] text-white"
+              >
                 {ButtonContent}
               </button>
             </Link>

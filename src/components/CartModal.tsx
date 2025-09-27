@@ -3,15 +3,11 @@ import { useEffect } from "react";
 import CloseIcon from "../assets/CloseIcon.svg";
 import CartEmptyIcon from "../assets/CartEmptyIcon.svg";
 import CartCalculator from "./CartCalculator";
-
-interface CartModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import type { CartModalProps } from "../types";
 
 export default function CartModal({ isOpen, onClose }: CartModalProps) {
   // Example cart count (make this dynamic later from state/context)
-  const cartCount: number = 2;
+  const ProductCount: number = 2;
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -51,7 +47,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           {/* Header */}
           <div className="flex justify-between items-center p-6 mt-[20px] mb-[42px]">
             <h2 className="font-poppins font-semibold text-[20px] leading-[20px] tracking-normal pl-[15px] ">
-              Shopping cart ({cartCount})
+              Shopping cart ({ProductCount})
             </h2>
 
             <button
@@ -63,7 +59,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
           </div>
 
           {/* Conditional Content */}
-          {cartCount === 0 ? (
+          {ProductCount === 0 ? (
             <div className="h-full flex flex-col items-center justify-start p-6 mt-[110px]">
               <img
                 src={CartEmptyIcon}
@@ -74,7 +70,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                 Ooops!
               </h2>
               <p className="font-poppins font-normal text-[14px] leading-[14px] tracking-normal text-center text-[#3E424A] mb-[61px]">
-                You’ve got nothing in your cart just yet...
+                You've got nothing in your cart just yet...
               </p>
 
               <button
@@ -86,7 +82,8 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
             </div>
           ) : (
             <div className="px-[40px] ">
-              <CartCalculator cartCount={cartCount} />
+              {/* Pass onClose prop to CartCalculator */}
+              <CartCalculator ProductCount={ProductCount} onClose={onClose} />
             </div>
           )}
         </div>
