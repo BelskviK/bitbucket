@@ -1,14 +1,14 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AuthProvider from "./context/authprovider";
+import AuthProvider from "@/contexts/authprovider";
 // layout
-import Banner from "./components/Banner";
+import Banner from "@/components/common/Banner";
 
 // page - CORRECTED: Import from pages, not components
-import Products from "./pages/Products";
-import ProductPage from "./pages/Product"; // Renamed to avoid conflict
-import Checkout from "./pages/Checkout";
-import Login from "./pages/Login";
+import Products from "@/pages/Products";
+import ProductPage from "@/pages/Product"; // Renamed to avoid conflict
+import Checkout from "@/pages/Checkout";
+import Login from "@/pages/Login";
 
 function App() {
   return (

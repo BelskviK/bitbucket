@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import type { ProductProps } from "../types";
+import type { ProductProps } from "@/types";
 
 export default function Product({ product }: ProductProps) {
   if (!product) {

@@ -1,5 +1,5 @@
-import defaultProfile from "../assets/DefaultProfileImg.svg";
-import type { ProfileImgProps } from "../types";
+import defaultProfile from "@/assets/DefaultProfileImg.svg";
+import type { ProfileImgProps } from "@/types";
 
 export default function ProfileImg({ avatar, className }: ProfileImgProps) {
   return (

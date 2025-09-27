@@ -1,7 +1,7 @@
 import { useRef } from "react";
-import ProfileImg from "./ProfileImg";
-import UploadPhoto from "../assets/UploadPhoto.svg";
-import { useAvatarInput } from "../hooks/useAvatarInput";
+import ProfileImg from "@/components/common/ProfileImg";
+import UploadPhoto from "@/assets/UploadPhoto.svg";
+import { useAvatarInput } from "@/hooks/useAvatarInput";
 
 interface AvatarInputProps {
   onAvatarChange: (avatar: File | null) => void;

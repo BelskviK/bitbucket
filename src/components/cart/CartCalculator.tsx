@@ -1,10 +1,11 @@
 // src/components/CartCalculator.tsx
 import { useLocation, useNavigate } from "react-router-dom";
-import CartItem from "./CartItem";
 import { useState } from "react";
-import CongratulationModal from "./CongratulationModal";
-import CartEmptyIcon from "../assets/CartEmptyIcon.svg";
-import type { CartCalculatorProps, CartResponse } from "../types";
+
+import CartItem from "@/components/cart/CartItem";
+import CongratulationModal from "@/components/cart/CongratulationModal";
+import CartEmptyIcon from "@/assets/CartEmptyIcon.svg";
+import type { CartCalculatorProps, CartResponse } from "@/types";
 
 interface CartCalculatorEnhancedProps extends CartCalculatorProps {
   onCheckout?: () => Promise<boolean>;

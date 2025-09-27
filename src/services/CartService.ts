@@ -1,12 +1,12 @@
 // src/services/cartservice.ts
-import api from "./api";
+import api from "@/services/Api";
 import type {
   CartResponse,
   AddToCartRequest,
   UpdateCartItemRequest,
   CheckoutRequest,
   CheckoutResponse,
-} from "../types";
+} from "@/types";
 
 export const CartService = {
   /**

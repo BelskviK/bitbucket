@@ -1,10 +1,10 @@
 // src/components/CartModal.tsx
 import { useEffect, useState } from "react";
-import CloseIcon from "../assets/CloseIcon.svg";
-import CartCalculator from "./CartCalculator";
-import type { CartModalProps, CartResponse } from "../types";
-import { cartManager } from "../services/CartManager";
-import { useAuth } from "../hooks/useAuth";
+import CloseIcon from "@/assets/CloseIcon.svg";
+import CartCalculator from "@/components/cart/CartCalculator";
+import type { CartModalProps, CartResponse } from "@/types";
+import { cartManager } from "@/services/CartManager";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function CartModal({ isOpen, onClose }: CartModalProps) {
   const [cartData, setCartData] = useState<CartResponse | null>(null);

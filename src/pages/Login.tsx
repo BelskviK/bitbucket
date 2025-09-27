@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import LoginForm from "../components/LoginForm";
-import RegisterForm from "../components/RegisterForm";
-import LoginBanner from "../assets/LoginBanner.svg";
+import LoginForm from "@/components/auth/LoginForm";
+import RegisterForm from "@/components/auth/RegisterForm";
+import LoginBanner from "@/assets/LoginBanner.svg";
 
 export default function Login() {
   const navigate = useNavigate();

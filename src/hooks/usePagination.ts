@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { PageNumbers, PaginationConfig } from "../types";
+import type { PageNumbers, PaginationConfig } from "@/types";
 
 export const usePagination = (
   currentPage: number,

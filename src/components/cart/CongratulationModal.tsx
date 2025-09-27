@@ -1,7 +1,7 @@
 // src/components/CongratulationModal.tsx
 import { useNavigate } from "react-router-dom";
-import TickIcon from "../assets/TickIcon.svg";
-import CloseIcon from "../assets/CloseIcon.svg";
+import TickIcon from "@/assets/TickIcon.svg";
+import CloseIcon from "@/assets/CloseIcon.svg";
 import { useEffect, useState } from "react";
 
 interface CongratulationModalProps {

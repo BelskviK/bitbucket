@@ -1,7 +1,7 @@
-// src/hooks/useProduct.ts (should work as is, but here's a minor improvement)
 import { useState, useEffect } from "react";
-import { ProductService } from "../services/productservice";
-import type { Product } from "../types";
+import { ProductService } from "@/services/ProductService";
+import { ERROR_MESSAGES } from "@/constants";
+import type { Product } from "@/types";
 
 export const useProduct = (id: number) => {
   const [product, setProduct] = useState<Product | null>(null);
@@ -15,21 +15,20 @@ export const useProduct = (id: number) => {
         setError(null);
 
         if (!id || id <= 0 || isNaN(id)) {
-          setError("Invalid product ID");
+          setError(ERROR_MESSAGES.INVALID_PRODUCT_ID);
           setLoading(false);
           return;
         }
 
         const productData = await ProductService.getProductById(id);
+        setProduct(productData || null);
 
         if (!productData) {
-          setError("Product not found");
-        } else {
-          setProduct(productData);
+          setError(ERROR_MESSAGES.PRODUCT_NOT_FOUND);
         }
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to fetch product"
+          err instanceof Error ? err.message : ERROR_MESSAGES.ADD_TO_CART_FAILED
         );
         console.error("Product fetch error:", err);
       } finally {

@@ -1,6 +1,6 @@
 // src/services/CartManager.ts
-import { CartService } from "./cartservice";
-import type { CartResponse } from "../types";
+import { CartService } from "@/services/CartService";
+import type { CartResponse } from "@/types";
 
 class CartManager {
   private static instance: CartManager;

@@ -1,6 +1,6 @@
-import BackButton from "../assets/BackButton.svg";
-import ForwardButton from "../assets/ForwardButton.svg";
-import type { PaginationProps, PageNumbers } from "../types";
+import BackButton from "@/assets/BackButton.svg";
+import ForwardButton from "@/assets/ForwardButton.svg";
+import type { PaginationProps, PageNumbers } from "@/types";
 
 export default function Pagination({
   currentPage,

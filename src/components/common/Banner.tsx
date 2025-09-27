@@ -1,12 +1,12 @@
 // src/components/Banner.tsx
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react"; // Add this import
-import Logo from "../assets/Logo.png";
-import loginIcon from "../assets/LoginIcon.svg";
-import ProfileImg from "./ProfileImg";
-import { useAuth } from "../hooks/useAuth";
-import CartIcon from "../assets/CartIconBanner.svg";
-import CartModal from "./CartModal";
+import Logo from "@/assets/Logo.png";
+import loginIcon from "@/assets/LoginIcon.svg";
+import { useAuth } from "@/hooks/useAuth";
+import CartIcon from "@/assets/CartIconBanner.svg";
+import ProfileImg from "@/components/common/ProfileImg";
+import CartModal from "@/components/cart/CartModal";
 
 export default function Banner() {
   const { user } = useAuth();

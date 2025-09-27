@@ -1,7 +1,7 @@
 // src/hooks/useAuth.ts
 import { useContext } from "react";
-import { AuthContext } from "../context/authcontext";
-import type { AuthContextType } from "../types"; // Centralized imports
+import { AuthContext } from "@/contexts/authcontext";
+import type { AuthContextType } from "@/types"; // Centralized imports
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);

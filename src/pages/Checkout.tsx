@@ -1,12 +1,12 @@
 // src/pages/Checkout.tsx
 import { useEffect, useState } from "react";
-import EnvelopIcon from "../assets/EnvelopeIcon.svg";
-import CartCalculator from "../components/CartCalculator";
-import type { CartResponse, CheckoutRequest } from "../types";
-import { cartManager } from "../services/CartManager";
-import { CartService } from "../services/cartservice";
-import { useAuth } from "../hooks/useAuth";
-import CongratulationModal from "../components/CongratulationModal";
+import EnvelopIcon from "@/assets/EnvelopeIcon.svg";
+import CartCalculator from "@/components/cart/CartCalculator";
+import type { CartResponse, CheckoutRequest } from "@/types";
+import { cartManager } from "@/services/CartManager";
+import { CartService } from "@/services/CartService";
+import { useAuth } from "@/hooks/useAuth";
+import CongratulationModal from "@/components/cart/CongratulationModal";
 import { useNavigate } from "react-router-dom";
 
 // Validation interface

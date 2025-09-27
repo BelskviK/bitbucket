@@ -1,6 +1,6 @@
 // src/services/ProductService.ts
-import api from "./api";
-import type { ProductQueryParamsService, ApiResponse, Product } from "../types";
+import api from "@/services/Api";
+import type { ProductQueryParamsService, ApiResponse, Product } from "@/types";
 
 interface ApiQueryParams {
   page?: number;

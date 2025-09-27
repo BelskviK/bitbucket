@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import IconFilter from "../assets/FilterIcon.svg";
+import IconFilter from "@/assets/FilterIcon.svg";
 import type {
   FilterParams,
   ProductsFilterProps,
   FilterModalProps,
   SortModalProps,
   FilterLabelProps,
-} from "../types";
+} from "@/types";
 // Filter Label Component
 const FilterLabel = ({ priceFrom, priceTo, onRemove }: FilterLabelProps) => {
   return (

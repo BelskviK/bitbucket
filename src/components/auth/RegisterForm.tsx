@@ -1,10 +1,10 @@
 // src\components\RegisterForm.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthService } from "../services/authservice";
-import type { ApiError, RegisterCredentials } from "../types"; // Updated import
-import AvatarInput from "./AvatarInput";
-import { useAuth } from "../hooks/useAuth";
+import { AuthService } from "@/services/AuthService";
+import type { ApiError, RegisterCredentials } from "@/types"; // Updated import
+import AvatarInput from "@/components/auth/AvatarInput";
+import { useAuth } from "@/hooks/useAuth";
 
 interface RegisterFormProps {
   switchToLogin: () => void;

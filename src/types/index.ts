@@ -1,5 +1,5 @@
 // src/types/index.ts
-export * from "./auth";
-export * from "./product";
-export * from "./components";
-export * from "./cart";
+export * from "@/types/auth";
+export * from "@/types/product";
+export * from "@/types/components";
+export * from "@/types/cart";

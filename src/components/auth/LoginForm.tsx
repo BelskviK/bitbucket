@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthService } from "../services/authservice";
-import { useAuth } from "../hooks/useAuth";
-import type { ApiError, LoginCredentials } from "../types";
+import { AuthService } from "@/services/AuthService";
+import { useAuth } from "@/hooks/useAuth";
+import type { ApiError, LoginCredentials } from "@/types";
 
 interface LoginFormProps {
   switchToRegister: () => void;

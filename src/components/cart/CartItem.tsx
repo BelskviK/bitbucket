@@ -1,8 +1,8 @@
 // src/components/CartItem.tsx
 import { useState } from "react";
-import type { CartItem as CartItemType } from "../types";
-import { CartService } from "../services/cartservice";
-import { cartManager } from "../services/CartManager";
+import type { CartItem as CartItemType } from "@/types";
+import { CartService } from "@/services/CartService";
+import { cartManager } from "@/services/CartManager";
 
 interface CartItemProps {
   item: CartItemType;

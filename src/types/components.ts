@@ -1,5 +1,5 @@
 // src\types\components.ts
-import type { FilterParams, Product } from "./product";
+import type { FilterParams, Product } from "@/types/product";
 
 // Product component props
 export interface ProductProps {
