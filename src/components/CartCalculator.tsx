@@ -3,12 +3,17 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import CartItem from "./CartItem";
 import { useState } from "react";
 import CongratulationModal from "./CongratulationModal";
+import CartEmptyIcon from "../assets/CartEmptyIcon.svg";
 import type { CartCalculatorProps, CartResponse } from "../types";
 
 export default function CartCalculator({
   cartData,
   onClose,
-}: CartCalculatorProps & { cartData: CartResponse | null }) {
+  isLoading = false,
+}: CartCalculatorProps & {
+  cartData: CartResponse | null;
+  isLoading?: boolean;
+}) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,16 +23,53 @@ export default function CartCalculator({
   const gap = isCheckout ? 81 : 100;
   const ButtonContent = isCheckout ? "Pay" : "Go to checkout";
 
-  if (!cartData || cartData.length === 0) {
+  // Loading state
+  if (isLoading) {
     return (
-      <div className="h-full flex flex-col items-center justify-center">
-        <p className="font-poppins font-normal text-[14px] text-[#3E424A]">
-          Your cart is empty
-        </p>
+      <div className="flex items-center justify-center h-full">
+        <p className="font-poppins font-normal text-[14px]">Loading cart...</p>
       </div>
     );
   }
 
+  // Empty state
+  if (!cartData || cartData.length === 0) {
+    const handleStartShopping = () => {
+      if (isCheckout) {
+        // If we're on checkout page, navigate to products
+        navigate("/products");
+      } else {
+        // If we're in modal (any other page), close modal and stay on current page
+        if (onClose) {
+          onClose(); // Only call onClose if it exists (modal context)
+        }
+      }
+    };
+
+    return (
+      <div className="h-full flex flex-col items-center justify-start p-6 mt-[110px]">
+        <img
+          src={CartEmptyIcon}
+          alt=""
+          className="w-[170px] h-[135px] mb-[30px]"
+        />
+        <h2 className="font-poppins font-semibold text-[24px] leading-[24px] tracking-normal mb-[20px]">
+          Ooops!
+        </h2>
+        <p className="font-poppins font-normal text-[14px] leading-[14px] tracking-normal text-center text-[#3E424A] mb-[61px]">
+          You've got nothing in your cart just yet...
+        </p>
+        <button
+          onClick={handleStartShopping}
+          className="w-[214px] h-[41px] flex items-center justify-center gap-[10px] px-[20px] py-[10px] rounded-[10px] bg-customOrange text-white font-poppins font-normal text-[14px] leading-[14px] tracking-normal"
+        >
+          Start shopping
+        </button>
+      </div>
+    );
+  }
+
+  // Calculate totals
   const subtotal = cartData.reduce(
     (sum, item) => sum + (item.total_price || 0),
     0
@@ -37,10 +79,10 @@ export default function CartCalculator({
 
   const handleButtonClick = () => {
     if (isCheckout) {
-      onClose();
+      if (onClose) onClose(); // Close modal if it exists
       setIsModalOpen(true);
     } else {
-      onClose();
+      if (onClose) onClose(); // Close modal if it exists
       navigate("/checkout");
     }
   };
@@ -91,7 +133,7 @@ export default function CartCalculator({
           ) : (
             <Link to="/checkout">
               <button
-                onClick={onClose}
+                onClick={() => onClose && onClose()} // Only call if exists
                 className="flex items-center justify-center w-[460px] h-[59px] rounded-[10px] px-[60px] py-[16px] gap-[10px] bg-customOrange font-poppins font-medium text-[18px] leading-[18px] tracking-[0%] text-white"
               >
                 {ButtonContent}

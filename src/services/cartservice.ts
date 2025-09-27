@@ -13,7 +13,6 @@ export const CartService = {
    * Get user's cart - returns array directly
    */
   async getCart(): Promise<CartResponse> {
-    console.log("🛒 CartService: Fetching cart...");
     try {
       const response = await api.get<CartResponse>("/cart");
 

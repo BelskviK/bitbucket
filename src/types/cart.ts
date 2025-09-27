@@ -46,6 +46,7 @@ export interface CartModalProps {
 }
 
 export interface CartCalculatorProps {
-  onClose: () => void;
+  onClose?: () => void;
   cartData: CartResponse | null;
+  isLoading?: boolean;
 }

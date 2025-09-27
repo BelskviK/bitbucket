@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 import EnvelopIcon from "../assets/EnvelopeIcon.svg";
 import CartCalculator from "../components/CartCalculator";
-import type { CartModalProps, CartResponse } from "../types";
+import type { CartResponse } from "../types";
 import { cartManager } from "../services/CartManager";
 import { useAuth } from "../hooks/useAuth";
 
-export default function Checkout({ onClose }: CartModalProps) {
+export default function Checkout() {
   const [cartData, setCartData] = useState<CartResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
@@ -52,21 +52,7 @@ export default function Checkout({ onClose }: CartModalProps) {
     );
   }
 
-  if (!cartData || cartData.length === 0) {
-    return (
-      <div className="px-[100px] flex flex-col justify-center items-center">
-        <div className="font-poppins font-semibold text-[42px] leading-[100%] tracking-[0] text-[#10151F] self-start mt-[84px] mb-[51px]">
-          Checkout
-        </div>
-        <div className="flex items-center justify-center h-64">
-          <p className="font-poppins font-normal text-[14px]">
-            Your cart is empty
-          </p>
-        </div>
-      </div>
-    );
-  }
-
+  // if (!cartData || cartData.length === 0)
   return (
     <div className="px-[100px] flex flex-col justify-center items-center">
       {/* Checkout Title */}
@@ -146,7 +132,11 @@ export default function Checkout({ onClose }: CartModalProps) {
 
         {/* Right Section - Summary */}
         <div className="w-[460px] h-full rounded-[16px]">
-          <CartCalculator cartData={cartData} onClose={onClose} />
+          <CartCalculator
+            cartData={cartData}
+            onClose={undefined}
+            isLoading={isLoading}
+          />
         </div>
       </div>
     </div>
