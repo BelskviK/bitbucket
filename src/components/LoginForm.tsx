@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "../services/authservice";
 import { useAuth } from "../hooks/useAuth";
@@ -9,9 +9,15 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({ switchToRegister }: LoginFormProps) {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  useEffect(() => {
+    if (user) {
+      navigate("/products");
+    }
+  }, [user, navigate]);
 
+  const { setUser } = useAuth();
   // Use LoginCredentials interface for better type safety
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: "",

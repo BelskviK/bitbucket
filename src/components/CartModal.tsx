@@ -1,9 +1,8 @@
 // src/components/CartModal.tsx
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import CloseIcon from "../assets/CloseIcon.svg";
 import CartEmptyIcon from "../assets/CartEmptyIcon.svg";
-import CartItem from "./CartItem";
+import CartCalculator from "./CartCalculator";
 
 interface CartModalProps {
   isOpen: boolean;
@@ -38,14 +37,14 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
     <>
       {/* Overlay with fade animation */}
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black bg-opacity-50 z-50 h-full transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={handleOverlayClick}
       >
         {/* Modal with slide animation */}
         <div
-          className={`fixed right-0 top-0 h-full w-[540px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${
+          className={`fixed right-0 top-0 h-full w-[540px] h-full bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
@@ -86,36 +85,9 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
               </button>
             </div>
           ) : (
-            <>
-              <div className="flex flex-col px-[42px] space-y-[36px] h-[600px]">
-                {Array.from({ length: cartCount }).map((_, idx) => (
-                  <CartItem key={idx} id={idx + 1} />
-                ))}
-              </div>
-              <div className="flex flex-col justify-end items-center h-[310px] gap-[100px]">
-                <div className=" flex flex-col h-[110px] w-full px-[40px] gap-[24px]">
-                  <div className="flex flex-row justify-between items-center font-poppins font-normal text-[16px] leading-[16px] tracking-[0%] text-[#3E424A] ">
-                    <p>Items subtotal</p>
-                    <p>$ 50</p>
-                  </div>
-
-                  <div className="flex flex-row justify-between items-center font-poppins font-normal text-[16px] leading-[16px] tracking-[0%] text-[#3E424A] ">
-                    <p>Delivery</p>
-                    <p>$ 5</p>
-                  </div>
-
-                  <div className="flex flex-row justify-between items-center font-poppins font-semibold text-[20px] leading-[20px] tracking-[0%] text-[#10151F]">
-                    <p>Total</p>
-                    <p>$55</p>
-                  </div>
-                </div>{" "}
-                <Link to="/checkout">
-                  <button className="flex items-center justify-center w-[460px] h-[59px] rounded-[10px] px-[60px] py-[16px] gap-[10px] bg-customOrange font-poppins font-medium text-[18px] leading-[18px] tracking-[0%] text-white">
-                    Go to checkout
-                  </button>
-                </Link>
-              </div>
-            </>
+            <div className="px-[40px] ">
+              <CartCalculator cartCount={cartCount} />
+            </div>
           )}
         </div>
       </div>

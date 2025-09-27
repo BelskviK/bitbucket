@@ -18,12 +18,15 @@ export default function CartItem({ id }: CartItemProps) {
   };
 
   return (
-    <div className="flex flex-row items-center justify-between w-[460px] h-[135px]">
+    <div
+      key={id}
+      className="flex flex-row items-center justify-between w-[460px] h-[135px]"
+    >
       <img src={DummyImage} alt="" className="w-[100px] h-[135px] mr-[17px]" />
       <div className="flex flex-col w-full justify-between items-start py-[8.5px] gap-[13px]">
         <div className="flex flex-row items-center justify-between w-full">
           <div className="flex flex-col items-start justify-between w-[285px]  gap-[16px]">
-            <h5 className="font-poppins font-medium text-[14px] leading-[14px] tracking-normal text-[#10151F]">
+            <h5 className="font-poppins font-semibold text-[14px] leading-[14px] tracking-normal text-[#10151F]">
               Kids' Curved Hilfiger Graphic T-Shirt
             </h5>
             <span className="font-poppins font-normal text-[12px] leading-[12px] tracking-normal text-[#3E424A]">
@@ -33,7 +36,7 @@ export default function CartItem({ id }: CartItemProps) {
               L
             </span>
           </div>
-          <p className="font-poppins font-medium text-[18px] leading-[18px] tracking-[0%] text-[#10151F] text-right w-auto self-start">
+          <p className="font-poppins font-semibold text-[18px] leading-[18px] tracking-[0%] text-[#10151F] text-right w-auto self-start">
             $ 25
           </p>
         </div>
@@ -61,7 +64,7 @@ export default function CartItem({ id }: CartItemProps) {
             </button>
           </div>
           <p className="font-poppins font-normal text-[12px] leading-[12px] tracking-[0%] text-[#3E424A]">
-            REMOVE
+            Remove
           </p>
         </div>
       </div>
