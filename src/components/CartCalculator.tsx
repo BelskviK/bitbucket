@@ -109,17 +109,17 @@ export default function CartCalculator({
           <div className="flex flex-col h-[110px] w-full gap-[26px]">
             <div className="flex flex-row justify-between items-center font-poppins font-normal text-[16px] leading-[16px] tracking-[0%] text-[#3E424A]">
               <p>Items subtotal</p>
-              <p>$ {subtotal.toFixed(2)}</p>
+              <p>$ {subtotal}</p>
             </div>
 
             <div className="flex flex-row justify-between items-center font-poppins font-normal text-[16px] leading-[16px] tracking-[0%] text-[#3E424A]">
               <p>Delivery</p>
-              <p>$ {deliveryCost.toFixed(2)}</p>
+              <p>$ {deliveryCost}</p>
             </div>
 
             <div className="flex flex-row justify-between items-center font-poppins font-semibold text-[20px] leading-[20px] tracking-[0%] text-[#10151F]">
               <p>Total</p>
-              <p>${totalCost.toFixed(2)}</p>
+              <p>${totalCost}</p>
             </div>
           </div>
 

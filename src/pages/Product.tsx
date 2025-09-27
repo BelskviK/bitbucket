@@ -90,11 +90,6 @@ export default function ProductPage() {
         size: selectedSize,
       };
 
-      console.log("🛒 Adding to cart:", {
-        productId,
-        data: addToCartData,
-      });
-
       // Call the cart service
       await CartService.addToCart(productId, addToCartData);
 
@@ -105,7 +100,6 @@ export default function ProductPage() {
       setIsCartOpen(true);
 
       // Optional: Show success message
-      console.log("✅ Product added to cart successfully!");
     } catch (error: unknown) {
       console.error("❌ Failed to add product to cart:", error);
 
@@ -288,7 +282,7 @@ export default function ProductPage() {
               {product.name}
             </p>
             <p className="font-poppins font-semibold text-[32px] leading-[1] tracking-[0%]">
-              $ {product.price.toFixed(2)}
+              $ {product.price}
             </p>
           </div>
 

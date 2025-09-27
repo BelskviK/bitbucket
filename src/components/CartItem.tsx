@@ -13,6 +13,25 @@ export default function CartItem({ item }: CartItemProps) {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
+  // Function to get the correct image based on selected color
+  const getImageForColor = (): string => {
+    if (!item.available_colors || !item.images || item.images.length === 0) {
+      return item.cover_image;
+    }
+
+    const colorIndex = item.available_colors.indexOf(item.color);
+
+    if (colorIndex >= 0 && colorIndex < item.images.length) {
+      return item.images[colorIndex];
+    }
+
+    if (item.images.length > 0) {
+      return item.images[0];
+    }
+
+    return item.cover_image;
+  };
+
   const decrement = async () => {
     if (quantity > 1) {
       setIsUpdating(true);
@@ -24,7 +43,7 @@ export default function CartItem({ item }: CartItemProps) {
         await cartManager.fetchCart();
       } catch (error) {
         console.error("Failed to update quantity:", error);
-        setQuantity(quantity); // Revert on error
+        setQuantity(quantity);
       } finally {
         setIsUpdating(false);
       }
@@ -41,7 +60,7 @@ export default function CartItem({ item }: CartItemProps) {
       await cartManager.fetchCart();
     } catch (error) {
       console.error("Failed to update quantity:", error);
-      setQuantity(quantity); // Revert on error
+      setQuantity(quantity);
     } finally {
       setIsUpdating(false);
     }
@@ -62,17 +81,19 @@ export default function CartItem({ item }: CartItemProps) {
     }
   };
 
+  const correctImage = getImageForColor();
+
   return (
     <div className="flex flex-row items-center justify-between w-[460px] h-[135px]">
       <img
-        src={item.cover_image}
+        src={correctImage}
         alt={item.name}
-        className="w-[100px] h-[135px] mr-[17px] object-cover"
+        className="w-[100px] h-[135px] mr-[17px] object-cover flex-shrink-0"
       />
-      <div className="flex flex-col w-full justify-between items-start py-[8.5px] gap-[13px]">
-        <div className="flex flex-row items-center justify-between w-full">
-          <div className="flex flex-col items-start justify-between w-[285px] gap-[16px]">
-            <h5 className="font-poppins font-semibold text-[14px] leading-[14px] tracking-normal text-[#10151F]">
+      <div className="flex flex-col w-full justify-between items-start py-[8.5px] gap-[13px] min-w-0">
+        <div className="flex flex-row items-center justify-between w-full gap-4">
+          <div className="flex flex-col items-start justify-between gap-[16px] min-w-0 flex-1">
+            <h5 className="font-poppins font-semibold text-[14px] leading-[14px] tracking-normal text-[#10151F] truncate w-full">
               {item.name}
             </h5>
             <span className="font-poppins font-normal text-[12px] leading-[12px] tracking-normal text-[#3E424A]">
@@ -82,7 +103,7 @@ export default function CartItem({ item }: CartItemProps) {
               {item.size}
             </span>
           </div>
-          <p className="font-poppins font-semibold text-[18px] leading-[18px] tracking-[0%] text-[#10151F] text-right w-auto self-start">
+          <p className="font-poppins font-semibold text-[18px] leading-[18px] tracking-[0%] text-[#10151F] text-right w-auto self-start whitespace-nowrap flex-shrink-0">
             $ {item.total_price || item.price || 0}
           </p>
         </div>
