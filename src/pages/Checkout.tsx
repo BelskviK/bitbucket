@@ -2,6 +2,7 @@
 import EnvelopIcon from "@/assets/EnvelopeIcon.svg";
 import CartCalculator from "@/components/cart/CartCalculator";
 import CongratulationModal from "@/components/cart/CongratulationModal";
+import { Input } from "@/components/common/Input";
 import { useAuth } from "@/hooks/useAuth";
 import { useCheckout } from "@/hooks/useCheckout";
 import { CHECKOUT_CONSTANTS } from "@/constants";
@@ -61,64 +62,37 @@ export default function Checkout() {
           <div className="space-y-[33px] w-[580px]">
             {/* Name + Surname */}
             <div className="flex gap-[20px]">
-              <div className="w-full">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.NAME}
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  className={`w-full h-[42px] rounded-[8px] border bg-white px-4
-                  font-poppins text-[16px] text-[#10151F] 
-                  placeholder:font-poppins placeholder:font-normal placeholder:text-[14px] 
-                  placeholder:leading-[100%] placeholder:tracking-[0] placeholder:text-[#3E424A]
-                  focus:outline-none focus:ring-2 ${
-                    getFieldError("name")
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-[#D9D9D9] focus:ring-[#10151F]"
-                  }`}
-                  required
-                />
-                {getFieldError("name") && (
-                  <p className="mt-1 text-red-500 text-xs font-poppins">
-                    {getFieldError("name")}
-                  </p>
-                )}
-              </div>
+              <Input
+                type="text"
+                name="name"
+                placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.NAME}
+                value={formData.name}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                error={getFieldError("name")}
+                required
+              />
 
-              <div className="w-full">
-                <input
-                  type="text"
-                  name="surname"
-                  placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.SURNAME}
-                  value={formData.surname}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  className={`w-full h-[42px] rounded-[8px] border bg-white px-4
-                  font-poppins text-[16px] text-[#10151F]
-                  placeholder:font-poppins placeholder:font-normal placeholder:text-[14px] 
-                  placeholder:leading-[100%] placeholder:tracking-[0] placeholder:text-[#3E424A]
-                  focus:outline-none focus:ring-2 ${
-                    getFieldError("surname")
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-[#D9D9D9] focus:ring-[#10151F]"
-                  }`}
-                  required
-                />
-                {getFieldError("surname") && (
-                  <p className="mt-1 text-red-500 text-xs font-poppins">
-                    {getFieldError("surname")}
-                  </p>
-                )}
-              </div>
+              <Input
+                type="text"
+                name="surname"
+                placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.SURNAME}
+                value={formData.surname}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                error={getFieldError("surname")}
+                required
+              />
             </div>
 
+            {/* Email */}
             {/* Email */}
             <div>
               <div
                 className={`flex items-center w-full h-[42px] rounded-[8px] border bg-white px-4 ${
                   getFieldError("email") ? "border-red-500" : "border-[#D9D9D9]"
+                } focus-within:ring-2 focus-within:ring-[#10151F] ${
+                  getFieldError("email") ? "focus-within:ring-red-500" : ""
                 }`}
               >
                 <span className="mr-2 w-[20px] h-[20px]">
@@ -132,10 +106,10 @@ export default function Checkout() {
                   onChange={handleInputChange}
                   onBlur={handleInputBlur}
                   className="flex-1 bg-transparent outline-none 
-                  font-poppins text-[16px] text-[#10151F]
-                  placeholder:font-poppins placeholder:font-normal 
-                  placeholder:text-[14px] placeholder:leading-[100%]
-                  placeholder:tracking-[0] placeholder:text-[#3E424A]"
+      font-poppins text-[16px] text-[#10151F]
+      placeholder:font-poppins placeholder:font-normal 
+      placeholder:text-[14px] placeholder:leading-[100%]
+      placeholder:tracking-[0] placeholder:text-[#3E424A]"
                   required
                 />
               </div>
@@ -148,57 +122,27 @@ export default function Checkout() {
 
             {/* Address + Zip */}
             <div className="flex gap-[20px]">
-              <div className="w-full">
-                <input
-                  type="text"
-                  name="address"
-                  placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.ADDRESS}
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  className={`w-full h-[42px] rounded-[8px] border bg-white px-4
-                  font-poppins text-[16px] text-[#10151F]
-                  placeholder:font-poppins placeholder:font-normal placeholder:text-[14px] 
-                  placeholder:leading-[100%] placeholder:tracking-[0] placeholder:text-[#3E424A]
-                  focus:outline-none focus:ring-2 ${
-                    getFieldError("address")
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-[#D9D9D9] focus:ring-[#10151F]"
-                  }`}
-                  required
-                />
-                {getFieldError("address") && (
-                  <p className="mt-1 text-red-500 text-xs font-poppins">
-                    {getFieldError("address")}
-                  </p>
-                )}
-              </div>
+              <Input
+                type="text"
+                name="address"
+                placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.ADDRESS}
+                value={formData.address}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                error={getFieldError("address")}
+                required
+              />
 
-              <div className="w-full">
-                <input
-                  type="text"
-                  name="zip_code"
-                  placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.ZIP_CODE}
-                  value={formData.zip_code}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  className={`w-full h-[42px] rounded-[8px] border bg-white px-4 
-                  font-poppins text-[16px] text-[#10151F] 
-                  placeholder:font-poppins placeholder:font-normal placeholder:text-[14px] 
-                  placeholder:leading-[100%] placeholder:tracking-[0] placeholder:text-[#3E424A] 
-                  focus:outline-none focus:ring-2 ${
-                    getFieldError("zip_code")
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-[#D9D9D9] focus:ring-[#10151F]"
-                  }`}
-                  required
-                />
-                {getFieldError("zip_code") && (
-                  <p className="mt-1 text-red-500 text-xs font-poppins">
-                    {getFieldError("zip_code")}
-                  </p>
-                )}
-              </div>
+              <Input
+                type="text"
+                name="zip_code"
+                placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.ZIP_CODE}
+                value={formData.zip_code}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                error={getFieldError("zip_code")}
+                required
+              />
             </div>
           </div>
         </div>

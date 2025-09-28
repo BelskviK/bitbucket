@@ -68,8 +68,6 @@ export const useCheckout = ({ user }: UseCheckoutProps): CheckoutHookReturn => {
 
   const validateZipCode = useCallback(
     (zip_code: string): string | undefined => {
-      if (!zip_code.trim())
-        return CHECKOUT_CONSTANTS.FORM.VALIDATION.ZIP_CODE.REQUIRED;
       if (!/^\d+$/.test(zip_code))
         return CHECKOUT_CONSTANTS.FORM.VALIDATION.ZIP_CODE.NUMERIC;
       if (zip_code.length < 3)

@@ -79,7 +79,6 @@ export const CHECKOUT_CONSTANTS = {
         MIN_LENGTH: "Address must be at least 3 characters",
       },
       ZIP_CODE: {
-        REQUIRED: "Zip code is required",
         NUMERIC: "Zip code must contain only numbers",
         MIN_LENGTH: "Zip code must be at least 3 digits",
       },

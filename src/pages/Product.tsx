@@ -101,7 +101,7 @@ export default function ProductPage() {
   return (
     <>
       {/* Breadcrumb */}
-      <div className="px-[100px] bg-grey-200 pt-[30px] pb-[49px] w-full font-poppins font-light text-[14px] leading-[1] tracking-[0%]">
+      <div className="px-[100px] bg-grey-200 pt-[30px] pb-[49px] w-full font-poppins font-light text-[14px] leading-[1] tracking-[0%] text-customBlack">
         Listing / Product / {product.name}
       </div>
 
@@ -113,11 +113,7 @@ export default function ProductPage() {
             images.map((image, index) => (
               <div
                 key={index}
-                className={`w-full min-h-[161px] bg-gray-200 overflow-hidden cursor-pointer border-2 ${
-                  selections.selectedImageIndex === index
-                    ? "border-blue-500"
-                    : "border-transparent"
-                }`}
+                className={`w-full min-h-[161px] bg-gray-200 overflow-hidden cursor-pointer border-2}`}
                 onClick={() => handleImageClick(index)}
               >
                 <img
@@ -139,7 +135,7 @@ export default function ProductPage() {
         </div>
 
         {/* Main Image */}
-        <div className="w-[703px] h-[937px] mr-[168px] bg-gray-200 flex items-center justify-center rounded-[10px] overflow-hidden">
+        <div className="w-[703px] h-[937px] mr-[168px]  flex items-center justify-center rounded-[10px] overflow-hidden">
           <img
             src={mainImage}
             alt={product.name}
@@ -151,7 +147,7 @@ export default function ProductPage() {
         <div className="w-[704px] h-[907px] flex flex-col items-start gap-[56px]">
           {/* Name & Price */}
           <div className="w-full">
-            <p className="font-poppins font-semibold text-[32px] leading-[1] tracking-[0%] mb-[38px]">
+            <p className="font-poppins font-semibold text-[32px] leading-[1] tracking-[0%] text-customBlack mb-[38px]">
               {product.name}
             </p>
             <p className="font-poppins font-semibold text-[32px] leading-[1] tracking-[0%]">

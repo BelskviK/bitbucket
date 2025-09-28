@@ -1,4 +1,4 @@
-// src/components/common/Input.tsx - Simple Version
+// src/components/common/Input.tsx
 import React from "react";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -48,6 +48,14 @@ export const Input: React.FC<InputProps> = ({
                 ? "88px"
                 : placeholder === "Confirm Password"
                 ? "150px"
+                : placeholder === "Name"
+                ? "62px"
+                : placeholder === "Surname"
+                ? "82px"
+                : placeholder === "Address"
+                ? "76px"
+                : placeholder === "Zip code"
+                ? "78px"
                 : "16px",
           }}
         >
@@ -99,9 +107,9 @@ export const Input: React.FC<InputProps> = ({
           )}
         </button>
       )}
-      {/* Error message */}
+      {/* Error message - ABSOLUTE POSITIONING */}
       {error && (
-        <p className="absolute -bottom-4 left-0 font-light text-xs-custom leading-none tracking-normal text-customOrange mt-1">
+        <p className="absolute -bottom-4 left-0 font-light text-[10px] leading-[1] tracking-[0px] text-customOrange mt-1">
           {error}
         </p>
       )}
