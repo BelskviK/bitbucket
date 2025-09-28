@@ -61,33 +61,38 @@ export default function Checkout() {
 
           <div className="space-y-[33px] w-[580px]">
             {/* Name + Surname */}
-            <div className="flex gap-[20px]">
-              <Input
-                type="text"
-                name="name"
-                placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.NAME}
-                value={formData.name}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-                error={getFieldError("name")}
-                required
-              />
+            <div className="flex gap-[24px] w-full">
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  name="name"
+                  placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.NAME}
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  error={getFieldError("name")}
+                  required
+                  className="flex-1 w-full"
+                />
+              </div>
 
-              <Input
-                type="text"
-                name="surname"
-                placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.SURNAME}
-                value={formData.surname}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-                error={getFieldError("surname")}
-                required
-              />
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  name="surname"
+                  placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.SURNAME}
+                  value={formData.surname}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  error={getFieldError("surname")}
+                  required
+                  className="flex-1 w-full"
+                />
+              </div>
             </div>
 
             {/* Email */}
-            {/* Email */}
-            <div>
+            <div className="w-full">
               <div
                 className={`flex items-center w-full h-[42px] rounded-[8px] border bg-white px-4 ${
                   getFieldError("email") ? "border-red-500" : "border-[#D9D9D9]"
@@ -106,10 +111,10 @@ export default function Checkout() {
                   onChange={handleInputChange}
                   onBlur={handleInputBlur}
                   className="flex-1 bg-transparent outline-none 
-      font-poppins text-[16px] text-[#10151F]
-      placeholder:font-poppins placeholder:font-normal 
-      placeholder:text-[14px] placeholder:leading-[100%]
-      placeholder:tracking-[0] placeholder:text-[#3E424A]"
+          font-poppins text-[16px] text-[#10151F]
+          placeholder:font-poppins placeholder:font-normal 
+          placeholder:text-[14px] placeholder:leading-[100%]
+          placeholder:tracking-[0] placeholder:text-[#3E424A]"
                   required
                 />
               </div>
@@ -121,28 +126,34 @@ export default function Checkout() {
             </div>
 
             {/* Address + Zip */}
-            <div className="flex gap-[20px]">
-              <Input
-                type="text"
-                name="address"
-                placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.ADDRESS}
-                value={formData.address}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-                error={getFieldError("address")}
-                required
-              />
+            <div className="flex gap-[24px] w-full">
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  name="address"
+                  placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.ADDRESS}
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  error={getFieldError("address")}
+                  required
+                  className="flex-1 w-full"
+                />
+              </div>
 
-              <Input
-                type="text"
-                name="zip_code"
-                placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.ZIP_CODE}
-                value={formData.zip_code}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-                error={getFieldError("zip_code")}
-                required
-              />
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  name="zip_code"
+                  placeholder={CHECKOUT_CONSTANTS.FORM.PLACEHOLDERS.ZIP_CODE}
+                  value={formData.zip_code}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  error={getFieldError("zip_code")}
+                  required
+                  className="flex-1 w-full"
+                />
+              </div>
             </div>
           </div>
         </div>
