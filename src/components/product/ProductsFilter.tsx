@@ -7,10 +7,11 @@ import type {
   SortModalProps,
   FilterLabelProps,
 } from "@/types";
+
 // Filter Label Component
 const FilterLabel = ({ priceFrom, priceTo, onRemove }: FilterLabelProps) => {
   return (
-    <div className="flex items-center h-[37px] px-[16px] py-[8px] border border-gray-300 rounded-[50px] gap-[6px] w-fit">
+    <div className="flex items-center h-[37px] px-[16px] py-[8px] border border-gray-300 rounded-[50px] gap-[6px] w-fit z-80">
       <span className="font-poppins font-normal text-[14px] leading-[100%] tracking-[0%]">
         Price: {priceFrom}-{priceTo}
       </span>
@@ -49,7 +50,8 @@ const FilterModal = ({
   onClose,
   onApplyFilters,
   currentFilters,
-}: FilterModalProps) => {
+  isSticky = false,
+}: FilterModalProps & { isSticky?: boolean }) => {
   const [priceFrom, setPriceFrom] = useState(
     currentFilters.price_from?.toString() || ""
   );
@@ -78,7 +80,9 @@ const FilterModal = ({
   return (
     <div
       ref={modalRef}
-      className="absolute top-full right-0 mt-2 w-[392px] h-[169px] bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4"
+      className={`absolute top-full right-0 mt-2 w-[392px] h-[169px] bg-white border border-gray-200 rounded-lg shadow-lg p-4 ${
+        isSticky ? "z-[10000]" : "z-50"
+      }`}
     >
       <h3 className="font-poppins font-semibold text-[16px] leading-[100%] tracking-[0] mb-[20px] mt-2">
         Select price
@@ -132,7 +136,12 @@ const FilterModal = ({
   );
 };
 
-const SortModal = ({ isOpen, onClose, onApplySort }: SortModalProps) => {
+const SortModal = ({
+  isOpen,
+  onClose,
+  onApplySort,
+  isSticky = false,
+}: SortModalProps & { isSticky?: boolean }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   useClickOutside(modalRef, onClose);
 
@@ -152,7 +161,9 @@ const SortModal = ({ isOpen, onClose, onApplySort }: SortModalProps) => {
   return (
     <div
       ref={modalRef}
-      className="absolute top-full right-0 mt-4 w-[223px] h-[184px] bg-white border border-gray-200 rounded-lg shadow-lg z-50 px-4"
+      className={`absolute top-full right-0 mt-4 w-[223px] h-[184px] bg-white border border-gray-200 rounded-lg shadow-lg px-4 ${
+        isSticky ? "z-60" : "z-60"
+      }`}
     >
       <div className="flex justify-between items-center py-[12px]">
         <h3 className="font-poppins font-semibold text-[16px] leading-[100%] tracking-[0] py-1">
@@ -182,7 +193,8 @@ export default function ProductsFilter({
   onFiltersChange,
   onSortChange,
   currentFilters,
-}: ProductsFilterProps) {
+  isSticky = false,
+}: ProductsFilterProps & { isSticky?: boolean }) {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [sortModalOpen, setSortModalOpen] = useState(false);
 
@@ -213,12 +225,14 @@ export default function ProductsFilter({
     currentFilters.price_to !== undefined;
 
   return (
-    <div className="z-50 w-[1720px] mx-auto">
+    <div className={`w-[1720px] mx-auto z-50 ${isSticky ? "relative" : ""}`}>
       {/* First Row: Title and Filter Controls */}
       <div className="flex justify-between items-center relative">
-        <h1 className="font-poppins font-semibold text-[42px] leading-[1] tracking-normal text-gray-900">
-          Products
-        </h1>
+        <div className="h-[63px] flex justify-between items-center">
+          <h1 className="font-poppins font-semibold text-[42px] leading-[1] tracking-[0%] text-gray-900">
+            Products
+          </h1>
+        </div>
 
         {/* Filter and Sort Controls */}
         <div className="flex items-center gap-[32px] relative">
@@ -246,6 +260,7 @@ export default function ProductsFilter({
               onClose={closeModals}
               onApplyFilters={handleApplyFilters}
               currentFilters={currentFilters}
+              isSticky={isSticky}
             />
           </div>
 
@@ -278,6 +293,7 @@ export default function ProductsFilter({
               isOpen={sortModalOpen}
               onClose={closeModals}
               onApplySort={handleApplySort}
+              isSticky={isSticky}
             />
           </div>
         </div>

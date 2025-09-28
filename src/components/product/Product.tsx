@@ -19,7 +19,7 @@ export default function Product({ product }: ProductProps) {
             <img
               src={product.cover_image}
               alt={product.name}
-              className="object-cover w-full h-full"
+              className="object-cover w-full h-full z-10"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
