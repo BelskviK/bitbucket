@@ -1,6 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    font-family: Poppins, sans-serif;
+  }
+}
+@layer components {
+  .required-label::after {
+    content: " *";
+    color: #ff4000; /* or use text-red-500 */
+  }
+}
 * {
   /* border: 1px solid red; */
 }

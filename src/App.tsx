@@ -4,9 +4,9 @@ import AuthProvider from "@/contexts/authprovider";
 // layout
 import Banner from "@/components/common/Banner";
 
-// page - CORRECTED: Import from pages, not components
+// pages
 import Products from "@/pages/Products";
-import ProductPage from "@/pages/Product"; // Renamed to avoid conflict
+import ProductPage from "@/pages/Product";
 import Checkout from "@/pages/Checkout";
 import Login from "@/pages/Login";
 
@@ -14,12 +14,13 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        {/* Outer wrapper ensures full screen background */}
-        <div className="min-h-screen flex justify-center items-start">
-          {/* Fixed-width app container */}
-          <div className="w-[1920px] h-[1080px] flex flex-col text-gray-800 bg-white">
+        {/* Full screen gray background */}
+        <div className="w-full h-screen flex justify-center items-center bg-gray-100">
+          {/* Fixed white layout (1920x1080) always on top */}
+          <div className="w-[1920px] h-[1080px] flex flex-col text-gray-800 bg-white shadow-lg fixed top-0 left-1/2 -translate-x-1/2">
             <Banner />
-            <main className="flex-1 pt-[80px]">
+            {/* Main content (banner 80px + rest 1000px) */}
+            <main className="pt-[80px] w-full h-full overflow-hidden">
               <Routes>
                 <Route path="/products" element={<Products />} />
                 <Route path="/products/:id" element={<ProductPage />} />

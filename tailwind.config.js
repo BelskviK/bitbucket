@@ -10,6 +10,10 @@ export default {
         customOrange: "#FF4000",
         customGray: "#E1DFE1",
         customBlack: "#10151F",
+        customText: "#3E424A",
+      },
+      screens: {
+        "3xl": "1920px",
       },
     },
   },

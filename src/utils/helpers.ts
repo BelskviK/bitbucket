@@ -58,3 +58,43 @@ export const handleProductsError = (error: unknown): void => {
   console.error("Failed to fetch products:", error);
   // You could add toast notifications here later
 };
+// src/utils/avatarHelpers.ts
+import { AVATAR_CONSTANTS } from "@/constants";
+
+export const validateAvatarFile = (
+  file: File
+): { isValid: boolean; error?: string } => {
+  if (file.size > AVATAR_CONSTANTS.VALIDATION.MAX_FILE_SIZE) {
+    return {
+      isValid: false,
+      error: AVATAR_CONSTANTS.VALIDATION.ERRORS.FILE_TOO_LARGE,
+    };
+  }
+
+  if (!file.type.startsWith("image/")) {
+    return {
+      isValid: false,
+      error: AVATAR_CONSTANTS.VALIDATION.ERRORS.INVALID_TYPE,
+    };
+  }
+
+  return { isValid: true };
+};
+
+export const createImagePreview = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        resolve(e.target.result as string);
+      } else {
+        reject(new Error(AVATAR_CONSTANTS.VALIDATION.ERRORS.PROCESSING_FAILED));
+      }
+    };
+
+    reader.onerror = () =>
+      reject(new Error(AVATAR_CONSTANTS.VALIDATION.ERRORS.PROCESSING_FAILED));
+    reader.readAsDataURL(file);
+  });
+};

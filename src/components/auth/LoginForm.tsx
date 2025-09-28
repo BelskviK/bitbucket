@@ -1,65 +1,95 @@
+// src/components/auth/LoginForm.tsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "@/services/AuthService";
 import { useAuth } from "@/hooks/useAuth";
-import type { ApiError, LoginCredentials } from "@/types";
+import type { LoginCredentials } from "@/types";
+import { Input } from "@/components/common/Input";
 
 interface LoginFormProps {
   switchToRegister: () => void;
 }
 
+interface ApiErrorResponse {
+  response?: {
+    status: number;
+    data: {
+      message?: string;
+      errors?: Record<string, string[]>;
+    };
+  };
+  message?: string;
+}
+
 export default function LoginForm({ switchToRegister }: LoginFormProps) {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (user) {
       navigate("/products");
     }
   }, [user, navigate]);
 
-  const { setUser } = useAuth();
-  // Use LoginCredentials interface for better type safety
-  const [credentials, setCredentials] = useState<LoginCredentials>({
+  const [formData, setFormData] = useState<LoginCredentials>({
     email: "",
     password: "",
   });
-
   const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [apiError, setApiError] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    // Clear errors when user starts typing
+    if (errors[e.target.name]) {
+      setErrors({
+        ...errors,
+        [e.target.name]: "",
+      });
+    }
+    // Clear password error when user starts typing in either field
+    if (errors.password && errors.password === "Email or password incorrect") {
+      setErrors({
+        ...errors,
+        password: "",
+      });
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation(); // Add this to prevent event bubbling
+    setErrors({}); // Clear previous errors
 
-    setApiError("");
+    // Frontend validation
+    const newErrors: Record<string, string> = {};
 
-    let valid = true;
-
-    if (credentials.email.length < 3) {
-      setEmailError("Email must be at least 3 characters");
-      valid = false;
-    } else {
-      setEmailError("");
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
     }
 
-    if (credentials.password.length < 3) {
-      setPasswordError("Password must be at least 3 characters");
-      valid = false;
-    } else {
-      setPasswordError("");
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 3) {
+      newErrors.password = "Password must be at least 3 characters";
     }
 
-    if (!valid) return;
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     setIsLoading(true);
 
     try {
       const response = await AuthService.login(
-        credentials.email,
-        credentials.password
+        formData.email,
+        formData.password
       );
 
       if (response.user) {
@@ -68,27 +98,42 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
 
       console.log("Login successful:", response);
       navigate("/products");
-    } catch (error) {
-      const apiError = error as ApiError;
-      setApiError(apiError.message || "Login failed. Please try again.");
-      console.error("Login error:", error);
+    } catch (error: unknown) {
+      console.log("Login error:", error);
 
-      // Prevent any default behavior that might cause refresh
-      e.preventDefault();
+      const apiError = error as ApiErrorResponse;
+
+      // Handle 422 validation errors from Laravel
+      if (apiError.response?.status === 422) {
+        const errorData = apiError.response.data;
+
+        // Extract field-specific errors from the API response
+        if (errorData.errors) {
+          const fieldErrors: Record<string, string> = {};
+
+          // Map API errors to field names - take the first error message for each field
+          Object.entries(errorData.errors).forEach(([field, messages]) => {
+            if (Array.isArray(messages) && messages.length > 0) {
+              fieldErrors[field] = messages[0];
+            }
+          });
+
+          setErrors(fieldErrors);
+        } else if (errorData.message) {
+          // For login errors, show "Email or password incorrect" under password field
+          setErrors({
+            password: "Email or password incorrect",
+          });
+        }
+      } else {
+        // For other types of login errors, also show under password field
+        setErrors({
+          password: "Email or password incorrect",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Update individual fields
-  const handleEmailChange = (email: string) => {
-    setCredentials((prev) => ({ ...prev, email }));
-    if (emailError) setEmailError("");
-  };
-
-  const handlePasswordChange = (password: string) => {
-    setCredentials((prev) => ({ ...prev, password }));
-    if (passwordError) setPasswordError("");
   };
 
   const togglePasswordVisibility = () => {
@@ -96,119 +141,57 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
   };
 
   return (
-    <div className="w-full flex flex-col justify-center items-center -ml-16 mb-36">
-      <form onSubmit={handleLogin} className="flex flex-col gap-6 w-full">
-        <h1 className="text-[42px] font-semibold font-poppins leading-[1] tracking-[0px] self-start mb-[24px]">
-          Log in
-        </h1>
+    <div className="w-full h-full flex flex-col justify-center items-center mb-16 -ml-10">
+      <form
+        onSubmit={handleLogin}
+        className="w-full max-w-[554px] flex flex-col gap-[24px]"
+        noValidate
+      >
+        <div className="h-[63px] flex text-center justify-start items-center mb-[24px]">
+          <h1 className="font-semibold text-[42px] leading-[100%] tracking-[0px] text-[#0B1E59]">
+            Log in
+          </h1>
+        </div>
 
-        {apiError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            {apiError}
-          </div>
-        )}
-
-        <div className="flex flex-col gap-6 w-full">
+        <div className="flex flex-col gap-6 w-full mb-[20px]">
           {/* Email Field */}
           <div className="relative">
-            <input
+            <Input
               type="email"
+              name="email"
               placeholder="Email"
-              className={`w-full h-12 px-4 rounded-lg border ${
-                emailError
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-orange-300"
-              } focus:outline-none focus:ring-2 transition-colors`}
+              error={errors.email}
               required
-              value={credentials.email}
-              onChange={(e) => handleEmailChange(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
               disabled={isLoading}
             />
-            {!credentials.email && (
-              <span className="absolute left-[56px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
-                *
-              </span>
-            )}
-            {emailError && (
-              <p className="text-red-500 text-sm mt-1">{emailError}</p>
-            )}
           </div>
 
-          {/* Password Field */}
+          {/* Password Field - Now shows "Email or password incorrect" for login errors */}
           <div className="relative">
-            <input
+            <Input
               type={showPassword ? "text" : "password"}
+              name="password"
               placeholder="Password"
-              className={`w-full h-12 px-4 pr-12 rounded-lg border ${
-                passwordError
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-orange-300"
-              } focus:outline-none focus:ring-2 transition-colors`}
+              error={errors.password}
+              showPasswordToggle={true}
+              onTogglePassword={togglePasswordVisibility}
+              showPassword={showPassword}
               required
-              value={credentials.password}
-              onChange={(e) => handlePasswordChange(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               disabled={isLoading}
             />
-            {!credentials.password && (
-              <span className="absolute left-[85px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
-                *
-              </span>
-            )}
-
-            {/* Eye Icon */}
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none transition-colors"
-              onClick={togglePasswordVisibility}
-              disabled={isLoading}
-            >
-              {showPassword ? (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                  />
-                </svg>
-              )}
-            </button>
-
-            {passwordError && (
-              <p className="text-red-500 text-sm mt-1">{passwordError}</p>
-            )}
           </div>
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 disabled:bg-orange-300 transition-colors mt-4 flex items-center justify-center"
+          className={`w-[554px] h-[41px] bg-[#FF4000] text-white rounded-[10px] px-[20px] py-[10px]
+            flex items-center justify-center gap-[10px] font-poppins font-normal text-[14px] leading-[100%]
+            tracking-[0] hover:bg-[#e63900] disabled:bg-orange-300 transition-colors`}
         >
           {isLoading ? (
             <span className="flex items-center">
@@ -235,7 +218,7 @@ export default function LoginForm({ switchToRegister }: LoginFormProps) {
               Logging in...
             </span>
           ) : (
-            "Login"
+            "Log in"
           )}
         </button>
       </form>

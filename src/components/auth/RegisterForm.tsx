@@ -1,17 +1,30 @@
-// src\components\RegisterForm.tsx
+// src/components/auth/RegisterForm.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "@/services/AuthService";
-import type { ApiError, RegisterCredentials } from "@/types"; // Updated import
+import type { RegisterCredentials } from "@/types";
 import AvatarInput from "@/components/auth/AvatarInput";
 import { useAuth } from "@/hooks/useAuth";
+import { Input } from "@/components/common/Input";
 
 interface RegisterFormProps {
   switchToLogin: () => void;
 }
+
 interface RegisterFormData extends Omit<RegisterCredentials, "avatar"> {
   avatar: File | null;
   password_confirmation: string;
+}
+
+interface ApiErrorResponse {
+  response?: {
+    status: number;
+    data: {
+      message?: string;
+      errors?: Record<string, string[]>;
+    };
+  };
+  message?: string;
 }
 
 export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
@@ -20,7 +33,7 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
   const [formData, setFormData] = useState<RegisterFormData>({
     email: "",
     username: "",
-    avatar: null as File | null, // Change to File | null
+    avatar: null as File | null,
     password: "",
     password_confirmation: "",
   });
@@ -54,23 +67,30 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiError("");
+    setErrors({}); // Clear previous errors
 
-    // Validation
+    // Frontend validation
     const newErrors: Record<string, string> = {};
 
     if (!formData.username.trim()) {
-      newErrors.username = "Name is required";
+      newErrors.username = "Username is required";
     }
 
-    if (formData.email.length < 3) {
-      newErrors.email = "Email must be at least 3 characters";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
     }
 
-    if (formData.password.length < 3) {
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 3) {
       newErrors.password = "Password must be at least 3 characters";
     }
 
-    if (formData.password !== formData.password_confirmation) {
+    if (!formData.password_confirmation) {
+      newErrors.password_confirmation = "Please confirm your password";
+    } else if (formData.password !== formData.password_confirmation) {
       newErrors.password_confirmation = "Passwords do not match";
     }
 
@@ -89,14 +109,49 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
         password: formData.password,
         password_confirmation: formData.password_confirmation,
       });
+
       if (response.user) {
-        setUser(response.user); // This updates the context state
+        setUser(response.user);
       }
       console.log("Registration successful:", response);
       navigate("/products");
-    } catch (error) {
-      const apiError = error as ApiError;
-      setApiError(apiError.message || "Registration failed. Please try again.");
+    } catch (error: unknown) {
+      console.log("Registration error:", error);
+
+      const apiError = error as ApiErrorResponse;
+
+      // Handle 422 validation errors from Laravel
+      if (apiError.response?.status === 422) {
+        const errorData = apiError.response.data;
+
+        // Extract field-specific errors from the API response
+        if (errorData.errors) {
+          const fieldErrors: Record<string, string> = {};
+
+          // Map API errors to field names - take the first error message for each field
+          Object.entries(errorData.errors).forEach(([field, messages]) => {
+            if (Array.isArray(messages) && messages.length > 0) {
+              fieldErrors[field] = messages[0];
+            }
+          });
+
+          setErrors(fieldErrors);
+
+          // Show generic API error message if no field-specific errors but there's a message
+          if (errorData.message && Object.keys(fieldErrors).length === 0) {
+            setApiError(errorData.message);
+          }
+        } else if (errorData.message) {
+          setApiError(errorData.message);
+        }
+      } else {
+        // Handle other types of errors
+        setApiError(
+          apiError.response?.data?.message ||
+            apiError.message ||
+            "Registration failed. Please try again."
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -111,20 +166,23 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
   };
 
   return (
-    <div className="w-full flex flex-col justify-center items-center -ml-16 mb-16">
+    <div className="w-full h-full flex flex-col justify-center items-center mb-16 -ml-10">
       <form
         onSubmit={handleRegister}
-        className="w-full max-w-[554px] flex flex-col gap-6"
+        className="w-full max-w-[554px] flex flex-col gap-[24px]"
+        noValidate
       >
-        <h1 className="text-[46px] font-bold font-poppins tracking-[0px] self-start">
-          Registration
-        </h1>
+        <div className="h-[63px] flex text-center justify-start items-center">
+          <h1 className="font-semibold text-[42px] leading-[100%] tracking-[0px] text-[#0B1E59]">
+            Registration
+          </h1>
+        </div>
 
         {/* Avatar Input Section */}
-        <div className="">
+        <div>
           <AvatarInput
             onAvatarChange={handleAvatarChange}
-            currentAvatar={
+            initialAvatar={
               formData.avatar ? URL.createObjectURL(formData.avatar) : ""
             }
           />
@@ -137,209 +195,76 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
           </div>
         )}
 
-        <div className="flex flex-col gap-6 w-full">
-          {/* Name Field */}
+        <div className="flex flex-col gap-6 w-full mb-[24px]">
+          {/* Username Field */}
           <div className="relative">
-            <input
+            <Input
               type="text"
               name="username"
               placeholder="Username"
-              className={`w-full h-[42px] px-4 rounded-lg border ${
-                errors.username
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-orange-300"
-              } placeholder-gray-800 placeholder-opacity-100 font-poppins font-normal text-[16px] leading-[21px] tracking-[0px] focus:outline-none focus:ring-2 transition-colors`}
+              error={errors.username}
               required
               value={formData.username}
               onChange={handleChange}
               disabled={isLoading}
             />
-
-            {!formData.username && (
-              <span className="absolute left-[102px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
-                *
-              </span>
-            )}
-            {errors.username && (
-              <p className="text-red-500 text-sm mt-1">{errors.username}</p>
-            )}
           </div>
 
           {/* Email Field */}
           <div className="relative">
-            <input
+            <Input
               type="email"
               name="email"
               placeholder="Email"
-              className={`w-full h-[42px] px-4 rounded-lg border ${
-                errors.email
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-orange-300"
-              } placeholder-gray-800 placeholder-opacity-100 font-poppins font-normal text-[16px] leading-[21px] tracking-[0px] focus:outline-none focus:ring-2 transition-colors`}
+              error={errors.email}
               required
               value={formData.email}
               onChange={handleChange}
               disabled={isLoading}
             />
-            {!formData.email && (
-              <span className="absolute left-[62px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
-                *
-              </span>
-            )}
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
           </div>
 
           {/* Password Field */}
           <div className="relative">
-            <input
+            <Input
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
-              className={`w-full h-[42px] px-4 pr-12 rounded-lg border ${
-                errors.password
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-orange-300"
-              } placeholder-gray-800 placeholder-opacity-100 font-poppins font-normal text-[16px] leading-[21px] tracking-[0px] focus:outline-none focus:ring-2 transition-colors`}
+              error={errors.password}
+              showPasswordToggle={true}
+              onTogglePassword={togglePasswordVisibility}
+              showPassword={showPassword}
               required
               value={formData.password}
               onChange={handleChange}
               disabled={isLoading}
             />
-            {!formData.password && (
-              <span className="absolute left-[97px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
-                *
-              </span>
-            )}
-
-            {/* Eye Icon for Password */}
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none transition-colors"
-              onClick={togglePasswordVisibility}
-              disabled={isLoading}
-            >
-              {showPassword ? (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                  />
-                </svg>
-              )}
-            </button>
-
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-            )}
           </div>
 
           {/* Confirm Password Field */}
           <div className="relative">
-            <input
+            <Input
               type={showConfirmPassword ? "text" : "password"}
               name="password_confirmation"
               placeholder="Confirm Password"
-              className={`w-full h-[42px] px-4 pr-12 rounded-lg border ${
-                errors.password_confirmation
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-orange-300"
-              } placeholder-gray-800 placeholder-opacity-100 font-poppins font-normal text-[16px] leading-[21px] tracking-[0px] focus:outline-none focus:ring-2 transition-colors`}
+              error={errors.password_confirmation}
+              showPasswordToggle={true}
+              onTogglePassword={toggleConfirmPasswordVisibility}
+              showPassword={showConfirmPassword}
               required
               value={formData.password_confirmation}
               onChange={handleChange}
               disabled={isLoading}
             />
-            {!formData.password_confirmation && (
-              <span className="absolute left-[164px] top-1/2 -translate-y-1/2 text-red-500 pointer-events-none">
-                *
-              </span>
-            )}
-
-            {/* Eye Icon for Confirm Password */}
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none transition-colors"
-              onClick={toggleConfirmPasswordVisibility}
-              disabled={isLoading}
-            >
-              {showConfirmPassword ? (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                  />
-                </svg>
-              )}
-            </button>
-
-            {errors.password_confirmation && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password_confirmation}
-              </p>
-            )}
           </div>
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-12 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 disabled:bg-orange-300 transition-colors mt-4 flex items-center justify-center"
+          className={`w-[554px] h-[41px] bg-[#FF4000] text-white rounded-[10px] px-[20px] py-[10px]
+            flex items-center justify-center gap-[10px] font-poppins font-normal text-[14px] leading-[100%]
+            tracking-[0] hover:bg-[#e63900] disabled:bg-orange-300 transition-colors`}
         >
           {isLoading ? (
             <span className="flex items-center">
@@ -371,13 +296,15 @@ export default function RegisterForm({ switchToLogin }: RegisterFormProps) {
         </button>
       </form>
 
-      <div className="flex flex-row justify-center items-center gap-2 mt-6">
-        <p className="text-gray-600">Already member?</p>
+      <div className="flex flex-row items-center justify-center gap-2 mt-[24px]">
+        <p className="font-poppins font-normal text-[14px] leading-[100%] tracking-[0] text-[#3E424A] text-center">
+          Already member?
+        </p>
         <button
-          className="text-orange-500 font-semibold hover:underline transition-colors"
+          className="font-poppins font-medium text-[14px] leading-[100%] tracking-[0] text-[#FF4000] text-center hover:underline transition-colors"
           onClick={switchToLogin}
         >
-          Login
+          Log in
         </button>
       </div>
     </div>

@@ -25,7 +25,7 @@ export default function Banner() {
   };
 
   return (
-    <header className="w-[1920px] h-[80px] bg-white fixed z-50 flex justify-between items-center py-[10px] px-[100px]">
+    <header className="w-full max-w-[1920px] h-[80px] bg-white fixed top-0 z-50 flex justify-between items-center py-[10px] px-[100px]">
       {/* Logo with Link */}
       <Link to="/products">
         <img

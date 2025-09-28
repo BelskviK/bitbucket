@@ -1,4 +1,4 @@
-import type { User } from "@/types"; // Centralized import
+import type { User } from "@/types";
 
 let currentUser: User | null = null;
 
